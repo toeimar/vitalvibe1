@@ -85,7 +85,10 @@ let STATE = {
 let unsubscribers = [];
 
 // ========== INIT ==========
-signInAnonymously(auth);
+// Render auth screen immediately without waiting for Firebase
+render();
+
+signInAnonymously(auth).catch(e => console.log('Auth error:', e));
 onAuthStateChanged(auth, async (firebaseUser) => {
   if (!firebaseUser) return;
   setupRealtimeListeners();
@@ -93,10 +96,9 @@ onAuthStateChanged(auth, async (firebaseUser) => {
     const saved = localStorage.getItem('vv_uid_v10');
     if (saved) {
       const snap = await getDoc(doc(db,'artifacts',APP_ID,'public','data','profiles',saved));
-      if (snap.exists()) { STATE.user = snap.data(); render(); }
+      if (snap.exists()) { STATE.user = snap.data(); setupUserListeners(STATE.user.uid); render(); }
     }
-  } catch(e){}
-  render();
+  } catch(e){ console.log(e); }
 });
 
 function setupRealtimeListeners() {
