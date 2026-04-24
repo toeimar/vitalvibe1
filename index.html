@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
 <meta charset="UTF-8"/>
@@ -8,6 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
 
 <!-- Firebase -->
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -22,7 +24,7 @@ const firebaseConfig = {
   messagingSenderId: "18887442289",
   appId: "1:18887442289:web:655ebb50976c911fec80d0"
 };
-const GEMINI_KEY = "AIzaSyATERpNYLv7zCO6_x3yhzWMjtbWy7c4Wiw";
+const GEMINI_KEY = "AIzaSyCF6cjShD37HjotLNPJFA5fEgJjl-snPPM";
 const ADMIN_PIN = "kira5642";
 const APP_ID = "vitalvibe-live-v11";
 
@@ -602,27 +604,32 @@ function renderFoodLog() {
 
       <input class="input-field" id="food-name" placeholder="ชื่อเมนูอาหาร" value="${STATE.foodName}" oninput="STATE.foodName=this.value"/>
       <textarea class="input-field" id="food-note" placeholder="พฤติกรรมการปรุง เช่น ไม่ใส่น้ำตาล" rows="2" style="resize:none">${STATE.foodNote}</textarea>
-      <button class="btn-primary rose" onclick="saveMeal()">💾 บันทึกมื้อนี้</button>
 
-      ${STATE.logs.length > 0 ? `
-      <h3 style="font-weight:800;margin:20px 0 12px">ประวัติวันนี้</h3>
-      <div class="log-list">
-        ${STATE.logs.map(log=>`
-        <div class="log-item">
-          <div class="log-img">${log.image?`<img src="${log.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/>`:'🍽️'}</div>
-          <div>
-            <div style="font-weight:800">${log.name}</div>
-            ${log.ai_data?`<div style="font-size:11px;color:#f97316;background:#fff7ed;padding:2px 8px;border-radius:6px;display:inline-block;margin-top:4px">🔥 ${log.ai_data.calories} kcal</div>`:''}
-          </div>
-        </div>`).join('')}
-      </div>` : ''}
-    </div>
+```
+  <button class="btn-primary rose" onclick="saveMeal()">💾 บันทึกมื้อนี้</button>
+
+  ${STATE.logs.length > 0 ? `
+  <h3 style="font-weight:800;margin:20px 0 12px">ประวัติวันนี้</h3>
+  <div class="log-list">
+    ${STATE.logs.map(log=>`
+    <div class="log-item">
+      <div class="log-img">${log.image?`<img src="${log.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/>`:'🍽️'}</div>
+      <div>
+        <div style="font-weight:800">${log.name}</div>
+        ${log.ai_data?`<div style="font-size:11px;color:#f97316;background:#fff7ed;padding:2px 8px;border-radius:6px;display:inline-block;margin-top:4px">🔥 ${log.ai_data.calories} kcal</div>`:''}
+      </div>
+    </div>`).join('')}
+  </div>` : ''}
+</div>
+```
+
   </div>`;
 }
 
 function renderLeaderboard() {
-  const me = STATE.leaderboard.find(u=>u.uid===STATE.user.uid);
-  return `
+const me = STATE.leaderboard.find(u=>u.uid===STATE.user.uid);
+return `
+
   <div class="lb-wrap">
     <div class="lb-bg-blob b1"></div>
     <div class="lb-bg-blob b2"></div>
@@ -662,8 +669,9 @@ function renderLeaderboard() {
 }
 
 function renderProfile() {
-  const u = STATE.user;
-  return `
+const u = STATE.user;
+return `
+
   <div class="page-pad">
     <div class="profile-card">
       <img src="${u.avatar}" class="avatar-lg" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=default'"/>
@@ -672,49 +680,53 @@ function renderProfile() {
       <button class="btn-edit" onclick="openEditProfile()">✏️ แก้ไขโปรไฟล์</button>
     </div>
 
-    ${STATE.editMode ? `
-    <div class="edit-overlay">
-      <div class="edit-modal">
-        <button class="close-btn" onclick="closeEdit()">✕</button>
-        <h3 style="font-weight:900;font-size:24px;text-align:center;margin-bottom:24px">แก้ไขข้อมูล</h3>
-        <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="handleAvatarChange(event)"/>
-        <div class="avatar-edit-wrap" onclick="document.getElementById('avatar-file').click()">
-          <img id="edit-avatar-preview" src="${STATE.editAvatar||u.avatar}" class="avatar-lg" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=default'"/>
-          <div class="avatar-overlay">📷</div>
-        </div>
-        <input class="input-field" id="edit-name-input" type="text" value="${STATE.editName||u.name}" placeholder="ชื่อแสดงผล"/>
-        <button class="btn-primary" onclick="saveProfile()">💾 บันทึก</button>
-      </div>
-    </div>` : ''}
-
-    <div class="weekly-card">
-      <h3 style="font-weight:800;margin-bottom:16px">📊 สรุปรายสัปดาห์ (AI)</h3>
-      <div class="eval-row">
-        <div class="eval-item"><div style="font-size:32px">🍬</div><div style="font-weight:700">ลดหวาน</div><div class="stars">${'⭐'.repeat(4)}${'☆'.repeat(1)}</div></div>
-        <div class="eval-item"><div style="font-size:32px">🧂</div><div style="font-weight:700">ลดเค็ม</div><div class="stars">${'⭐'.repeat(5)}</div></div>
-        <div class="eval-item"><div style="font-size:32px">💧</div><div style="font-weight:700">ลดมัน</div><div class="stars">${'⭐'.repeat(3)}${'☆'.repeat(2)}</div></div>
-      </div>
-      <div class="ai-advice" style="margin-top:16px">"สัปดาห์นี้ลดเค็มได้เยี่ยม! รักษาระดับนี้นะครับ 👏"</div>
+```
+${STATE.editMode ? `
+<div class="edit-overlay">
+  <div class="edit-modal">
+    <button class="close-btn" onclick="closeEdit()">✕</button>
+    <h3 style="font-weight:900;font-size:24px;text-align:center;margin-bottom:24px">แก้ไขข้อมูล</h3>
+    <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="handleAvatarChange(event)"/>
+    <div class="avatar-edit-wrap" onclick="document.getElementById('avatar-file').click()">
+      <img id="edit-avatar-preview" src="${STATE.editAvatar||u.avatar}" class="avatar-lg" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=default'"/>
+      <div class="avatar-overlay">📷</div>
     </div>
+    <input class="input-field" id="edit-name-input" type="text" value="${STATE.editName||u.name}" placeholder="ชื่อแสดงผล"/>
+    <button class="btn-primary" onclick="saveProfile()">💾 บันทึก</button>
+  </div>
+</div>` : ''}
 
-    <div class="badges-card">
-      <h3 style="font-weight:800;margin-bottom:16px">🏅 รางวัลความสำเร็จ</h3>
-      <div class="badges-row">
-        <div class="badge-item"><div class="badge-icon" style="background:#dbeafe">🛡️</div><div class="badge-name">นักลดเค็มมือโปร</div></div>
-        <div class="badge-item"><div class="badge-icon" style="background:#d1fae5">🏅</div><div class="badge-name">พิชิต 7 วัน</div></div>
-        <div class="badge-item locked"><div class="badge-icon" style="background:#f3f4f6">🏃</div><div class="badge-name">แสนก้าว</div></div>
-      </div>
-    </div>
+<div class="weekly-card">
+  <h3 style="font-weight:800;margin-bottom:16px">📊 สรุปรายสัปดาห์ (AI)</h3>
+  <div class="eval-row">
+    <div class="eval-item"><div style="font-size:32px">🍬</div><div style="font-weight:700">ลดหวาน</div><div class="stars">${'⭐'.repeat(4)}${'☆'.repeat(1)}</div></div>
+    <div class="eval-item"><div style="font-size:32px">🧂</div><div style="font-weight:700">ลดเค็ม</div><div class="stars">${'⭐'.repeat(5)}</div></div>
+    <div class="eval-item"><div style="font-size:32px">💧</div><div style="font-weight:700">ลดมัน</div><div class="stars">${'⭐'.repeat(3)}${'☆'.repeat(2)}</div></div>
+  </div>
+  <div class="ai-advice" style="margin-top:16px">"สัปดาห์นี้ลดเค็มได้เยี่ยม! รักษาระดับนี้นะครับ 👏"</div>
+</div>
 
-    <button class="btn-rewards" onclick="STATE.showRewards=true;render()">🎁 ร้านค้าแลกของรางวัล</button>
-    <button class="btn-logout" onclick="handleLogout()">🚪 ออกจากระบบ</button>
+<div class="badges-card">
+  <h3 style="font-weight:800;margin-bottom:16px">🏅 รางวัลความสำเร็จ</h3>
+  <div class="badges-row">
+    <div class="badge-item"><div class="badge-icon" style="background:#dbeafe">🛡️</div><div class="badge-name">นักลดเค็มมือโปร</div></div>
+    <div class="badge-item"><div class="badge-icon" style="background:#d1fae5">🏅</div><div class="badge-name">พิชิต 7 วัน</div></div>
+    <div class="badge-item locked"><div class="badge-icon" style="background:#f3f4f6">🏃</div><div class="badge-name">แสนก้าว</div></div>
+  </div>
+</div>
+
+<button class="btn-rewards" onclick="STATE.showRewards=true;render()">🎁 ร้านค้าแลกของรางวัล</button>
+<button class="btn-logout" onclick="handleLogout()">🚪 ออกจากระบบ</button>
+```
+
   </div>`;
 }
 
 function renderRewardsPage() {
-  const tab = STATE.rewardsTab || 'virtual';
-  const list = STATE.rewards.filter(r=>r.type===tab);
-  return `
+const tab = STATE.rewardsTab || ‘virtual’;
+const list = STATE.rewards.filter(r=>r.type===tab);
+return `
+
   <div style="height:100%;display:flex;flex-direction:column">
     <div class="rewards-header">
       <button class="back-btn" onclick="STATE.showRewards=false;render()">←</button>
@@ -743,91 +755,91 @@ function renderRewardsPage() {
 function bindUserEvents() {}
 window.setTab = (tab) => { STATE.activeTab = tab; render(); };
 window.addWater = async () => {
-  if (STATE.stats.water >= 8) { showToast('ดื่มน้ำครบ 8 แก้วแล้ว! 💧'); return; }
-  const today = getTodayStr();
-  await updateDoc(doc(db,'artifacts',APP_ID,'public','data',`stats_${STATE.user.uid}`,today),{water: STATE.stats.water+1});
+if (STATE.stats.water >= 8) { showToast(‘ดื่มน้ำครบ 8 แก้วแล้ว! 💧’); return; }
+const today = getTodayStr();
+await updateDoc(doc(db,‘artifacts’,APP_ID,‘public’,‘data’,`stats_${STATE.user.uid}`,today),{water: STATE.stats.water+1});
 };
 window.addSteps = async () => {
-  const v = parseInt(document.getElementById('step-input')?.value||0);
-  if (!v||v<=0) return;
-  const today = getTodayStr();
-  await updateDoc(doc(db,'artifacts',APP_ID,'public','data',`stats_${STATE.user.uid}`,today),{steps: STATE.stats.steps+v});
-  STATE.stepInput = '';
+const v = parseInt(document.getElementById(‘step-input’)?.value||0);
+if (!v||v<=0) return;
+const today = getTodayStr();
+await updateDoc(doc(db,‘artifacts’,APP_ID,‘public’,‘data’,`stats_${STATE.user.uid}`,today),{steps: STATE.stats.steps+v});
+STATE.stepInput = ‘’;
 };
 window.setFilter = (f) => { STATE.filterCategory = f; render(); };
 window.setMeal = (m) => { STATE.activeMeal = m; render(); };
 
 let pendingMissionId = null;
 window.startMission = (id) => {
-  pendingMissionId = id;
-  document.getElementById('mission-file').click();
+pendingMissionId = id;
+document.getElementById(‘mission-file’).click();
 };
 window.handleMissionPhoto = async (e) => {
-  const file = e.target.files[0];
-  if (!file || !pendingMissionId) return;
-  const mission = STATE.missions.find(m=>m.id===pendingMissionId);
-  if (!mission) return;
-  const today = getTodayStr();
-  const done = STATE.userProgress.filter(p=>p.missionId===mission.id&&p.date===today).length;
-  if (done >= (mission.maxPerDay||1)) { showToast('ทำครบโควต้าแล้ว!','error'); return; }
-  showToast('AI กำลังตรวจสอบ... รอสักครู่');
-  const base64 = await resizeImage(file);
-  setTimeout(async () => {
-    await addDoc(collection(db,'artifacts',APP_ID,'public','data',`progress_${STATE.user.uid}`),{missionId:mission.id,date:today,timestamp:Date.now(),image:base64});
-    await updateDoc(doc(db,'artifacts',APP_ID,'public','data','profiles',STATE.user.uid),{points:(STATE.user.points||0)+mission.points});
-    showToast(`ยืนยันสำเร็จ! ได้รับ ${mission.points} แต้ม 🎉`);
-    e.target.value=''; pendingMissionId=null;
-  }, 2000);
+const file = e.target.files[0];
+if (!file || !pendingMissionId) return;
+const mission = STATE.missions.find(m=>m.id===pendingMissionId);
+if (!mission) return;
+const today = getTodayStr();
+const done = STATE.userProgress.filter(p=>p.missionId===mission.id&&p.date===today).length;
+if (done >= (mission.maxPerDay||1)) { showToast(‘ทำครบโควต้าแล้ว!’,‘error’); return; }
+showToast(‘AI กำลังตรวจสอบ… รอสักครู่’);
+const base64 = await resizeImage(file);
+setTimeout(async () => {
+await addDoc(collection(db,‘artifacts’,APP_ID,‘public’,‘data’,`progress_${STATE.user.uid}`),{missionId:mission.id,date:today,timestamp:Date.now(),image:base64});
+await updateDoc(doc(db,‘artifacts’,APP_ID,‘public’,‘data’,‘profiles’,STATE.user.uid),{points:(STATE.user.points||0)+mission.points});
+showToast(`ยืนยันสำเร็จ! ได้รับ ${mission.points} แต้ม 🎉`);
+e.target.value=’’; pendingMissionId=null;
+}, 2000);
 };
 
 window.handleFoodPhoto = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  STATE.isAnalyzing = true; STATE.aiResult = null; STATE.foodImage = null; render();
-  try {
-    const base64 = await resizeImage(file);
-    STATE.foodImage = base64;
-    const analysis = await analyzeFoodWithAI(base64);
-    STATE.aiResult = analysis;
-    STATE.foodName = analysis.name !== 'ไม่พบอาหาร' ? analysis.name : '';
-  } catch(err) { showToast('AI ขัดข้อง กรอกข้อมูลเองได้เลย','error'); }
-  STATE.isAnalyzing = false; render();
+const file = e.target.files[0];
+if (!file) return;
+STATE.isAnalyzing = true; STATE.aiResult = null; STATE.foodImage = null; render();
+try {
+const base64 = await resizeImage(file);
+STATE.foodImage = base64;
+const analysis = await analyzeFoodWithAI(base64);
+STATE.aiResult = analysis;
+STATE.foodName = analysis.name !== ‘ไม่พบอาหาร’ ? analysis.name : ‘’;
+} catch(err) { showToast(‘AI ขัดข้อง กรอกข้อมูลเองได้เลย’,‘error’); }
+STATE.isAnalyzing = false; render();
 };
 
 window.saveMeal = async () => {
-  const name = document.getElementById('food-name')?.value || STATE.foodName;
-  const note = document.getElementById('food-note')?.value || STATE.foodNote;
-  if (!name && !STATE.foodImage) { showToast('กรุณาระบุชื่ออาหารหรือถ่ายรูป','error'); return; }
-  await addDoc(collection(db,'artifacts',APP_ID,'public','data',`logs_${STATE.user.uid}`),{
-    meal: STATE.activeMeal, name: name||'เมนูระบุไม่ได้', note,
-    image: STATE.foodImage, ai_data: STATE.aiResult||null,
-    date: getTodayStr(), timestamp: Date.now()
-  });
-  STATE.foodName=''; STATE.foodNote=''; STATE.foodImage=null; STATE.aiResult=null;
-  showToast('บันทึกมื้ออาหารสำเร็จ! 🥗');
+const name = document.getElementById(‘food-name’)?.value || STATE.foodName;
+const note = document.getElementById(‘food-note’)?.value || STATE.foodNote;
+if (!name && !STATE.foodImage) { showToast(‘กรุณาระบุชื่ออาหารหรือถ่ายรูป’,‘error’); return; }
+await addDoc(collection(db,‘artifacts’,APP_ID,‘public’,‘data’,`logs_${STATE.user.uid}`),{
+meal: STATE.activeMeal, name: name||‘เมนูระบุไม่ได้’, note,
+image: STATE.foodImage, ai_data: STATE.aiResult||null,
+date: getTodayStr(), timestamp: Date.now()
+});
+STATE.foodName=’’; STATE.foodNote=’’; STATE.foodImage=null; STATE.aiResult=null;
+showToast(‘บันทึกมื้ออาหารสำเร็จ! 🥗’);
 };
 
 window.openEditProfile = () => { STATE.editMode=true; STATE.editName=STATE.user.name; STATE.editAvatar=STATE.user.avatar; render(); };
 window.closeEdit = () => { STATE.editMode=false; render(); };
 window.handleAvatarChange = async (e) => {
-  const file = e.target.files[0];
-  if (file) { const b64 = await resizeImage(file,200); STATE.editAvatar=b64; document.getElementById('edit-avatar-preview').src=b64; }
+const file = e.target.files[0];
+if (file) { const b64 = await resizeImage(file,200); STATE.editAvatar=b64; document.getElementById(‘edit-avatar-preview’).src=b64; }
 };
 window.saveProfile = async () => {
-  const name = document.getElementById('edit-name-input')?.value;
-  if (!name) { showToast('กรุณาใส่ชื่อ','error'); return; }
-  await updateDoc(doc(db,'artifacts',APP_ID,'public','data','profiles',STATE.user.uid),{name, avatar: STATE.editAvatar||STATE.user.avatar});
-  STATE.editMode=false; showToast('อัปเดตโปรไฟล์แล้ว! 🌟');
+const name = document.getElementById(‘edit-name-input’)?.value;
+if (!name) { showToast(‘กรุณาใส่ชื่อ’,‘error’); return; }
+await updateDoc(doc(db,‘artifacts’,APP_ID,‘public’,‘data’,‘profiles’,STATE.user.uid),{name, avatar: STATE.editAvatar||STATE.user.avatar});
+STATE.editMode=false; showToast(‘อัปเดตโปรไฟล์แล้ว! 🌟’);
 };
 
 window.redeemReward = (id, title, image, points) => {
-  if ((STATE.user.points||0) < points) { showToast('คะแนนไม่พอ!','error'); return; }
-  showConfirm(`ยืนยันแลก "${title}" ด้วย ${points} แต้ม?`, async () => {
-    await updateDoc(doc(db,'artifacts',APP_ID,'public','data','profiles',STATE.user.uid),{points:(STATE.user.points||0)-points});
-    document.getElementById('success-modal').style.display='flex';
-    document.getElementById('success-title').textContent=`${image} ${title}`;
-    STATE.showRewards=false;
-  });
+if ((STATE.user.points||0) < points) { showToast(‘คะแนนไม่พอ!’,‘error’); return; }
+showConfirm(`ยืนยันแลก "${title}" ด้วย ${points} แต้ม?`, async () => {
+await updateDoc(doc(db,‘artifacts’,APP_ID,‘public’,‘data’,‘profiles’,STATE.user.uid),{points:(STATE.user.points||0)-points});
+document.getElementById(‘success-modal’).style.display=‘flex’;
+document.getElementById(‘success-title’).textContent=`${image} ${title}`;
+STATE.showRewards=false;
+});
 };
 window.handleLogout = handleLogout;
 
@@ -1026,6 +1038,7 @@ body{font-family:'Kanit',sans-serif;background:#1a1a2e;height:100vh;display:flex
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .page-pad,.lb-wrap>*,.mission-card,.profile-card{animation:fadeIn .3s ease}
 </style>
+
 </head>
 <body>
 <div id="root">
@@ -1035,9 +1048,11 @@ body{font-family:'Kanit',sans-serif;background:#1a1a2e;height:100vh;display:flex
 </div>
 
 <!-- Toast -->
+
 <div id="toast"></div>
 
 <!-- Confirm Dialog -->
+
 <div class="dialog-overlay" id="confirm-dialog">
   <div class="dialog-box">
     <div class="dialog-title" id="confirm-text"></div>
@@ -1049,6 +1064,7 @@ body{font-family:'Kanit',sans-serif;background:#1a1a2e;height:100vh;display:flex
 </div>
 
 <!-- Prompt Dialog -->
+
 <div class="dialog-overlay" id="prompt-dialog">
   <div class="dialog-box">
     <div class="dialog-title" id="prompt-title"></div>
@@ -1062,6 +1078,7 @@ body{font-family:'Kanit',sans-serif;background:#1a1a2e;height:100vh;display:flex
 </div>
 
 <!-- Success Modal -->
+
 <div id="success-modal">
   <div class="success-box">
     <div class="success-confetti" style="top:-20px;left:-20px">🎉</div>
