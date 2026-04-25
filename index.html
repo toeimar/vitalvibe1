@@ -1,653 +1,1749 @@
+```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>VitalVibe</title>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Kanit',sans-serif;background:#1a1a2e;height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden}
-#root{width:100%;max-width:430px;height:100vh;background:white;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.5)}
-#toast{display:none;position:absolute;top:40px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;justify-content:center}
-.toast{background:#111;color:white;padding:12px 24px;border-radius:50px;font-weight:700;font-size:14px}
-.toast-error{background:#ef4444}
-.dialog-overlay{display:none;position:absolute;inset:0;z-index:1000;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);justify-content:center;align-items:center;padding:24px}
-.dialog-box{background:white;border-radius:28px;padding:32px;width:100%;text-align:center}
-.dialog-title{font-size:18px;font-weight:900;color:#111;margin-bottom:24px;line-height:1.4}
-.dialog-btns{display:flex;gap:12px}
-.dialog-btns button{flex:1;padding:14px;border-radius:16px;font-family:inherit;font-size:15px;font-weight:800;border:none;cursor:pointer}
-.btn-cancel{background:#f3f4f6;color:#666}
-.btn-confirm{background:#ef4444;color:white}
-.auth-screen{height:100vh;width:100%;background:linear-gradient(135deg,#FF9A9E,#FECFEF,#A1C4FD);display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
-.auth-card{background:rgba(255,255,255,.97);border-radius:40px;padding:32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.1)}
-.logo-box{width:88px;height:88px;background:linear-gradient(135deg,#FF7A00,#FF004D);border-radius:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;transform:rotate(3deg)}
-.brand-title{font-size:36px;font-weight:900;background:linear-gradient(135deg,#FF7A00,#FF004D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:4px}
-.brand-sub{text-align:center;color:#888;font-weight:600;margin-bottom:24px}
-.tab-switch{display:flex;background:#f3f4f6;padding:6px;border-radius:16px;margin-bottom:20px}
-.tab-btn{flex:1;padding:12px;border:none;background:transparent;border-radius:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;color:#aaa}
-.tab-btn.active{background:white;color:#FF004D;box-shadow:0 2px 10px rgba(0,0,0,.1)}
-.input-field{width:100%;background:#f8f9fa;border:2px solid transparent;border-radius:16px;padding:14px 16px;font-family:inherit;font-size:15px;font-weight:600;color:#333;outline:none;margin-bottom:12px}
-.input-field:focus{border-color:#FF7A00}
-.btn-primary{width:100%;background:linear-gradient(135deg,#FF7A00,#FF004D);color:white;border:none;border-radius:16px;padding:16px;font-family:inherit;font-size:17px;font-weight:900;cursor:pointer;margin-top:4px}
-.user-wrap{height:100vh;display:flex;flex-direction:column;background:#f4f7f6}
-.user-body{flex:1;overflow-y:auto;padding-bottom:80px}
-.bottom-nav{position:absolute;bottom:0;width:100%;background:rgba(255,255,255,.97);border-top:1px solid #f0f0f0;display:flex;justify-content:space-around;padding:8px 0;z-index:20}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;font-family:inherit;font-size:10px;font-weight:700;color:#9ca3af;cursor:pointer;padding:4px 0}
-.nav-item.active{font-weight:900;color:#f97316}
-.nav-icon{font-size:22px}
-.page-pad{padding:48px 20px 20px}
-.profile-row{display:flex;align-items:center;gap:16px;background:white;border-radius:24px;padding:14px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.avatar-md{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.greeting{font-size:22px;font-weight:900;color:#111}
-.greeting-sub{font-size:13px;color:#f97316;font-weight:600}
-.points-card{background:linear-gradient(135deg,#FF7A00,#FF004D);border-radius:24px;padding:24px;margin-bottom:20px;color:white}
-.xp-bar{height:12px;background:rgba(0,0,0,.2);border-radius:50px;overflow:hidden;margin:12px 0 16px}
-.xp-fill{height:100%;background:white;border-radius:50px;width:40%}
-.points-row{display:flex;align-items:center;gap:12px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.stat-card{background:white;border-radius:24px;padding:16px;display:flex;flex-direction:column;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.05);position:relative;padding-bottom:32px}
-.stat-label{font-size:13px;font-weight:800;color:#374151;margin-bottom:12px;text-align:center}
-.ring-wrap{position:relative;width:96px;height:96px;margin-bottom:8px}
-.ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900}
-.fab-btn{position:absolute;bottom:-18px;width:48px;height:48px;border-radius:50%;border:4px solid white;font-size:24px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white}
-.fab-teal{background:linear-gradient(135deg,#34A0A4,#0ea5e9)}
-.fab-rose{background:linear-gradient(135deg,#f43f5e,#fb923c)}
-.step-row{position:absolute;bottom:-16px;width:90%;display:flex;background:white;border-radius:50px;padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.step-input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;font-weight:700;text-align:center;color:#374151}
-.btn-meal{width:100%;background:linear-gradient(135deg,#92400e,#78350f);color:white;border:none;border-radius:24px;padding:20px;font-family:inherit;font-size:18px;font-weight:900;cursor:pointer;margin-top:8px}
-.page-title{font-size:28px;font-weight:900;color:#111;margin-bottom:20px}
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px}
-.filter-row::-webkit-scrollbar{display:none}
-.filter-btn{white-space:nowrap;padding:10px 20px;border-radius:16px;border:none;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;background:white;color:#6b7280}
-.filter-btn.active{background:linear-gradient(135deg,#34A0A4,#10b981);color:white}
-.mission-card{background:white;border-radius:24px;padding:16px;display:flex;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:12px}
-.mission-card.done{background:#f0fdf4;border:2px solid #bbf7d0}
-.mission-icon{width:56px;height:56px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.mission-content{flex:1}
-.mission-title{font-size:17px;font-weight:900;color:#111}
-.mission-title.strike{text-decoration:line-through;color:#9ca3af}
-.mission-sub{font-size:13px;color:#6b7280;font-weight:600;margin:4px 0 12px}
-.mission-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f3f4f6;padding-top:10px}
-.pts-tag{font-size:13px;font-weight:900;color:#f97316;background:#fff7ed;padding:6px 12px;border-radius:10px;border:1px solid #fed7aa}
-.done-badge{font-weight:800;color:#10b981;font-size:14px;background:white;padding:6px 12px;border-radius:10px;border:1px solid #bbf7d0}
-.btn-verify{background:linear-gradient(135deg,#FF7A00,#f97316);color:white;border:none;padding:8px 16px;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer}
-.food-header{padding:48px 20px 16px;background:white;border-bottom:1px solid #f0f0f0}
-.meal-tabs{display:flex;border-bottom:1px solid #f3f4f6;background:white}
-.meal-tab{flex:1;padding:14px 4px;border:none;background:transparent;font-family:inherit;font-size:12px;font-weight:800;color:#9ca3af;cursor:pointer;border-bottom:3px solid transparent}
-.meal-tab.active{color:#f43f5e;border-bottom-color:#f43f5e}
-.photo-zone{width:100%;height:220px;border-radius:24px;border:2px dashed #fca5a5;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;margin-bottom:16px}
-.photo-placeholder{text-align:center;padding:20px}
-.analyzing{font-size:18px;font-weight:800;color:#f43f5e;text-align:center;padding:20px}
-.ai-result{background:#fff5f5;border:1px solid #fecaca;border-radius:20px;padding:20px;margin-bottom:16px}
-.ai-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
-.ai-item{background:white;border-radius:14px;padding:10px;text-align:center}
-.ai-val{font-size:20px;font-weight:900;color:#f43f5e}
-.ai-val.green{color:#10b981}
-.ai-key{font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-top:4px}
-.ai-advice{background:white;border-radius:14px;padding:14px;font-size:13px;font-weight:600;color:#374151;text-align:center}
-.log-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.log-item{background:white;border-radius:20px;padding:12px;display:flex;align-items:center;gap:12px}
-.log-img{width:64px;height:64px;background:#f3f4f6;border-radius:16px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px}
-.lb-wrap{height:100%;background:linear-gradient(180deg,#f4f5f7,#e6f3ec);overflow-y:auto;padding-bottom:120px}
-.lb-row{background:white;border-radius:24px;padding:14px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;border:3px solid transparent;margin-bottom:12px}
-.lb-row.me{border-color:#34d399}
-.lb-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0}
-.lb-name{font-weight:900;font-size:17px;color:#111}
-.lb-pts{font-weight:700;font-size:14px;color:#6b7280}
-.you-badge{font-size:11px;background:#10b981;color:white;padding:2px 8px;border-radius:50px;margin-left:6px}
-.my-rank{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:398px;background:linear-gradient(135deg,#1e3a8a,#3b82f6);border-radius:28px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:10}
-.profile-card{background:white;border-radius:28px;padding:28px;display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
-.avatar-lg{width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid white;box-shadow:0 6px 20px rgba(0,0,0,.15)}
-.lv-badge{background:#d1fae5;color:#059669;font-weight:800;font-size:14px;padding:6px 20px;border-radius:50px;margin-top:8px}
-.btn-edit{margin-top:16px;background:#111;color:white;border:none;padding:12px 24px;border-radius:16px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer}
-.edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px}
-.edit-modal{background:white;border-radius:32px;padding:32px;width:100%;max-width:340px;position:relative}
-.close-btn{position:absolute;top:16px;right:16px;background:#f3f4f6;border:none;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer}
-.weekly-card,.badges-card{background:white;border-radius:24px;padding:20px;margin-bottom:16px}
-.eval-row{display:flex;justify-content:space-around;padding:12px;background:#f9fafb;border-radius:18px;margin-bottom:16px}
-.eval-item{text-align:center;font-size:13px;font-weight:700;color:#374151}
-.badges-row{display:flex;justify-content:space-around}
-.badge-item{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.badge-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px}
-.badge-name{font-size:11px;font-weight:800;color:#374151;max-width:72px}
-.btn-rewards{width:100%;background:linear-gradient(135deg,#FF7A00,#FF004D);color:white;border:none;border-radius:24px;padding:18px;font-family:inherit;font-size:18px;font-weight:900;cursor:pointer;margin-bottom:12px}
-.btn-logout{width:100%;background:white;color:#ef4444;border:2px solid #fecaca;border-radius:24px;padding:16px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:32px}
-.rewards-wrap{height:100%;display:flex;flex-direction:column;background:white}
-.rewards-header{padding:48px 20px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:12px}
-.back-btn{background:#f3f4f6;border:none;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer}
-.reward-big-card{background:white;border-radius:24px;padding:16px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.06);min-height:180px}
-.redeem-btn{width:100%;margin-top:auto;padding:10px;border:none;border-radius:14px;font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;background:linear-gradient(135deg,#FF7A00,#f97316);color:white}
-.empty-state{text-align:center;color:#9ca3af;font-weight:600;padding:32px;background:white;border-radius:20px;border:2px dashed #e5e7eb;width:100%}
-.admin-wrap{height:100vh;display:flex;flex-direction:column;background:#f8fafb}
-.admin-header{background:#111827;color:white;padding:48px 24px 24px;border-radius:0 0 32px 32px}
-.admin-title{font-size:24px;font-weight:900;background:linear-gradient(135deg,#34d399,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.admin-body{flex:1;overflow-y:auto;padding:20px 16px 100px}
-.section-title{font-size:22px;font-weight:900;color:#111;margin-bottom:16px}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.user-row{background:white;border-radius:20px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.avatar-sm{width:44px;height:44px;border-radius:12px;object-fit:cover}
-.user-info{flex:1}
-.pts-badge{font-weight:900;font-size:16px;color:#3b82f6}
-.icon-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:8px}
-.icon-btn-sm{width:36px;height:36px;border:none;border-radius:12px;font-size:16px;cursor:pointer}
-.btn-green{background:#d1fae5}
-.btn-red-sm{background:#fee2e2}
-.btn-add{background:#10b981;color:white;border:none;padding:10px 20px;border-radius:14px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer}
-.btn-orange{background:#f97316}
-.add-form{background:white;border-radius:24px;padding:20px;margin-bottom:16px;border:2px solid #d1fae5}
-.form-row{display:flex;gap:8px}
-.mission-row{background:white;border-radius:20px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.cat-badge{font-size:11px;font-weight:900;padding:3px 10px;border-radius:50px;color:white;display:inline-block;margin-bottom:4px}
-.cat-red{background:#ef4444}.cat-blue{background:#3b82f6}.cat-green{background:#10b981}
-.rewards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.reward-card{background:white;border-radius:20px;padding:16px;text-align:center;position:relative}
-.reward-delete{position:absolute;top:8px;right:8px;background:#f3f4f6;border:none;width:24px;height:24px;border-radius:50%;font-size:12px;cursor:pointer}
-#success-modal{display:none;position:absolute;inset:0;z-index:200;background:rgba(0,0,0,.8);justify-content:center;align-items:center;padding:24px}
-.success-box{background:white;border-radius:36px;padding:32px;width:100%;text-align:center}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fade{animation:fadeIn .3s ease}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VitalVibe - สุขภาพดีเริ่มต้นที่นี่</title>
+  
+  <script>window.process = { env: { NODE_ENV: 'production' } };</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+    .animate-slide-down { animation: slideDown 0.4s ease-out; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
-<div id="root">
-  <div style="display:flex;height:100vh;align-items:center;justify-content:center;background:white">
-    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#FF004D" stroke-width="2" style="animation:fadeIn 1s infinite alternate"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-  </div>
-</div>
-<div id="toast"></div>
-<div class="dialog-overlay" id="confirm-dialog">
-  <div class="dialog-box">
-    <div class="dialog-title" id="confirm-text"></div>
-    <div class="dialog-btns">
-      <button class="btn-cancel" id="confirm-cancel">ยกเลิก</button>
-      <button class="btn-confirm" id="confirm-ok">ยืนยัน</button>
-    </div>
-  </div>
-</div>
-<div class="dialog-overlay" id="prompt-dialog">
-  <div class="dialog-box">
-    <div class="dialog-title" id="prompt-title"></div>
-    <p style="color:#888;font-size:13px;margin-bottom:16px" id="prompt-desc"></p>
-    <input type="number" id="prompt-input" class="input-field" style="text-align:center;font-size:28px;font-weight:900;color:#10b981"/>
-    <div class="dialog-btns" style="margin-top:8px">
-      <button class="btn-cancel" id="prompt-cancel">ยกเลิก</button>
-      <button style="background:#10b981;color:white" id="prompt-ok">บันทึก</button>
-    </div>
-  </div>
-</div>
-<div id="success-modal">
-  <div class="success-box">
-    <div style="font-size:72px;margin-bottom:12px">🎉</div>
-    <h2 style="font-size:28px;font-weight:900;color:#f97316;margin-bottom:8px">ยินดีด้วย!</h2>
-    <p style="font-weight:700;margin-bottom:8px">คุณได้แลกรางวัล:</p>
-    <p id="success-title" style="font-size:20px;font-weight:900;margin-bottom:20px;padding:16px;background:#f9fafb;border-radius:16px"></p>
-    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:20px;padding:20px;margin-bottom:20px">
-      <p style="font-size:36px;margin-bottom:8px">📱</p>
-      <p style="font-weight:800;font-size:16px;color:#92400e;margin-bottom:12px">📸 กรุณาแคปหน้าจอนี้</p>
-      <div style="background:#06C755;padding:14px;border-radius:14px"><span style="color:white;font-weight:900;font-size:16px">ส่งหลักฐานผ่าน LINE</span></div>
-    </div>
-    <button onclick="document.getElementById('success-modal').style.display='none'" style="width:100%;background:#111;color:white;border:none;padding:16px;border-radius:20px;font-family:inherit;font-size:16px;font-weight:900;cursor:pointer">ปิดหน้าต่าง</button>
-  </div>
-</div>
+<body class="bg-gray-100 h-screen w-screen overflow-hidden">
+  <div id="root" class="h-full w-full max-w-md mx-auto bg-white shadow-2xl relative"></div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, addDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  <script type="text/babel" data-type="module">
+    import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
+    import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+    import { 
+      Home, Compass, ClipboardList, Trophy, User, 
+      Camera, Plus, ChevronLeft, Search, CheckCircle, 
+      Droplet, Footprints, Flame, Settings, Users, 
+      Edit, Trash2, LogOut, Activity, Save, X, Lock, 
+      Gift, Star, Sparkles, Image as ImageIcon,
+      Mail, Key, Smartphone, AlertCircle, Eye, Calendar, Repeat,
+      Pill, Stethoscope, HeartPulse, Clock, FileText, CalendarDays, Target, TrendingUp
+    } from 'https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0';
 
-const FB = {
-  apiKey: "AIzaSyA6pLMExFN2d7oVQKLldcB_ahB5-o4zw_E",
-  authDomain: "vitalvibe-c0306.firebaseapp.com",
-  projectId: "vitalvibe-c0306",
-  storageBucket: "vitalvibe-c0306.firebasestorage.app",
-  messagingSenderId: "18887442289",
-  appId: "1:18887442289:web:655ebb50976c911fec80d0"
-};
-const GEMINI_KEY = "AIzaSyAgPtNVdTi7Eqo36czB__wFtuM5oA7OEmA";
-const ADMIN_PIN = "kira5642";
-const AID = "vitalvibe-live-v11";
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, updateDoc, addDoc, deleteDoc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-const app = initializeApp(FB);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    // --- Configuration ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6pLMExFN2d7oVQKLldcB_ahB5-o4zw_E",
+      authDomain: "vitalvibe-c0306.firebaseapp.com",
+      projectId: "vitalvibe-c0306",
+      storageBucket: "vitalvibe-c0306.firebasestorage.app",
+      messagingSenderId: "18887442289",
+      appId: "1:18887442289:web:0b917a9e043b44b4ec80d0",
+      measurementId: "G-G3H4NSH3FX"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = "vitalvibe-c0306"; 
+    const geminiApiKey = "AIzaSyDZBt86VWg_AuUZPbapbY5GyGa1YOJaZXU";
 
-const today = () => { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
-const clean = e => e.trim().toLowerCase().replace(/[^a-z0-9]/g,'_');
-const resize = (file,max=600) => new Promise(r=>{
-  const fr=new FileReader();
-  fr.onload=e=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');let w=img.width,h=img.height;if(w>h){if(w>max){h*=max/w;w=max;}}else{if(h>max){w*=max/h;h=max;}}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);r(c.toDataURL('image/jpeg',0.6));};img.src=e.target.result;};fr.readAsDataURL(file);
-});
+    const ADMIN_PIN = "kira5642"; 
 
-const aiFood = async (b64) => {
-  const prompt = 'วิเคราะห์ภาพอาหารนี้ ตอบเป็น JSON เท่านั้น ไม่มี markdown: {"name":"ชื่อเมนู","calories":300,"sugar":"ต่ำ","sodium":"ต่ำ","fat":"ต่ำ","advice":"คำแนะนำ"}';
-  for (const m of ['gemini-1.5-flash','gemini-1.5-pro']) {
-    try {
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+GEMINI_KEY, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({contents:[{parts:[{text:prompt},{inlineData:{mimeType:'image/jpeg',data:b64.split(',')[1]}}]}]})
-      });
-      const data = await res.json();
-      const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (txt) return JSON.parse(txt.replace(/```json|```/g,'').trim());
-    } catch(e) { continue; }
-  }
-  throw new Error('AI ไม่สามารถวิเคราะห์ได้');
-};
+    // --- Helpers ---
+    const getTodayStr = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    };
 
-let S = {
-  user:null, missions:[], rewards:[], leaderboard:[], progress:[], stats:{water:0,steps:0}, logs:[],
-  tab:'home', meal:'lunch', showRewards:false, rewardsTab:'virtual',
-  analyzing:false, aiResult:null, foodImg:null, foodName:'', foodNote:'',
-  filter:'ทั้งหมด', stepVal:'',
-  editMode:false, editName:'', editAvatar:'',
-  adminTab:'users', addMission:null, addReward:null,
-};
+    // คำนวณสัปดาห์ปัจจุบัน (2024-W42)
+    const getWeekStr = () => {
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() + 4 - (d.getDay() || 7)); 
+      const yearStart = new Date(d.getFullYear(), 0, 1);
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return `${d.getFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+    };
 
-const toast = (msg,type='ok') => {
-  const t=document.getElementById('toast');
-  t.innerHTML='<div class="toast'+(type==='err'?' toast-error':'')+'">'+msg+'</div>';
-  t.style.display='flex'; setTimeout(()=>t.style.display='none',3000);
-};
-const confirm = (txt,fn) => {
-  const el=document.getElementById('confirm-dialog');
-  document.getElementById('confirm-text').textContent=txt;
-  el.style.display='flex';
-  document.getElementById('confirm-ok').onclick=()=>{el.style.display='none';fn();};
-  document.getElementById('confirm-cancel').onclick=()=>el.style.display='none';
-};
-const prompt_ = (title,desc,def,fn) => {
-  const el=document.getElementById('prompt-dialog');
-  document.getElementById('prompt-title').textContent=title;
-  document.getElementById('prompt-desc').textContent=desc;
-  document.getElementById('prompt-input').value=def;
-  el.style.display='flex';
-  document.getElementById('prompt-ok').onclick=()=>{el.style.display='none';fn(document.getElementById('prompt-input').value);};
-  document.getElementById('prompt-cancel').onclick=()=>el.style.display='none';
-};
+    // ดึงวันที่ย้อนหลัง 7 วัน
+    const getPast7Days = () => {
+      const dates = [];
+      for(let i=0; i<7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dates.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+      }
+      return dates;
+    };
 
-const R = () => {
-  const root=document.getElementById('root');
-  if (!root) return;
-  if (!S.user) { root.innerHTML=authHTML(); bindAuth(); return; }
-  if (S.user.role==='admin') { root.innerHTML=adminHTML(); return; }
-  root.innerHTML=userHTML();
-};
+    const cleanEmail = (email) => email.trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-const authHTML = () => `
-<div class="auth-screen">
-  <div class="auth-card fade">
-    <div class="logo-box"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
-    <h1 class="brand-title">VitalVibe</h1>
-    <p class="brand-sub">คอมมูนิตี้คนรักสุขภาพ 🌟</p>
-    <div class="tab-switch">
-      <button class="tab-btn active" id="tl" onclick="window._sw('login')">เข้าสู่ระบบ</button>
-      <button class="tab-btn" id="tr" onclick="window._sw('reg')">สมัครสมาชิก</button>
-    </div>
-    <div id="regf" style="display:none"><input class="input-field" id="iname" type="text" placeholder="ชื่อแสดงผล"/></div>
-    <input class="input-field" id="iemail" type="email" placeholder="อีเมล"/>
-    <input class="input-field" id="ipass" type="password" placeholder="รหัสผ่าน (6+ ตัว)"/>
-    <div id="adminwrap" style="display:none;text-align:center;margin:8px 0">
-      <label style="font-size:13px;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-        <input type="checkbox" id="adminck" onchange="window._togglePin()"/> สมัครในฐานะผู้ดูแลระบบ
-      </label>
-    </div>
-    <div id="pinwrap" style="display:none">
-      <input class="input-field" id="ipin" type="password" placeholder="รหัสลับแอดมิน" style="border-color:#ff6b6b;background:#fff5f5"/>
-    </div>
-    <button class="btn-primary" id="abtn">เข้าสู่ระบบ 🚀</button>
-  </div>
-</div>`;
+    const resizeImage = (file, maxSize = 600) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          if (width > height) { if (width > maxSize) { height *= maxSize / width; width = maxSize; } }
+          else { if (height > maxSize) { width *= maxSize / height; height = maxSize; } }
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
-let aMode='login';
-const bindAuth = () => {
-  document.getElementById('abtn').onclick = async () => {
-    const email=document.getElementById('iemail').value;
-    const pass=document.getElementById('ipass').value;
-    if (!email||!pass) { toast('กรุณากรอกอีเมลและรหัสผ่าน','err'); return; }
-    if (aMode==='login') {
-      const eid=clean(email);
-      const snap=await getDoc(doc(db,'artifacts',AID,'public','data','auth',eid));
-      if (!snap.exists()) { toast('ไม่พบบัญชีนี้','err'); return; }
-      const d=snap.data();
-      if (d.password!==pass) { toast('รหัสผ่านไม่ถูกต้อง','err'); return; }
-      const ps=await getDoc(doc(db,'artifacts',AID,'public','data','profiles',d.uid));
-      if (ps.exists()) { S.user=ps.data(); try{localStorage.setItem('vv_uid_v10',S.user.uid);}catch(e){} if(S.user.role==='user')setupUser(S.user.uid); toast('เข้าสู่ระบบสำเร็จ! 🚀'); R(); }
-    } else {
-      const name=document.getElementById('iname').value;
-      if (!name) { toast('กรุณากรอกชื่อ','err'); return; }
-      const isAdmin=document.getElementById('adminck').checked;
-      const pin=isAdmin?document.getElementById('ipin').value:'';
-      if (isAdmin&&pin!==ADMIN_PIN) { toast('รหัสลับแอดมินไม่ถูกต้อง!','err'); return; }
-      const eid=clean(email);
-      const snap=await getDoc(doc(db,'artifacts',AID,'public','data','auth',eid));
-      if (snap.exists()) { toast('อีเมลนี้ถูกใช้แล้ว','err'); return; }
-      const uid='USR_'+Date.now()+Math.random().toString(36).substring(2,8);
-      const role=isAdmin?'admin':'user';
-      const avatar='https://api.dicebear.com/7.x/notionists/svg?seed='+encodeURIComponent(name);
-      await setDoc(doc(db,'artifacts',AID,'public','data','auth',eid),{email:eid,password:pass,uid,role});
-      const profile={uid,name,role,points:0,level:1,avatar};
-      await setDoc(doc(db,'artifacts',AID,'public','data','profiles',uid),profile);
-      S.user=profile; try{localStorage.setItem('vv_uid_v10',uid);}catch(e){} if(role==='user')setupUser(uid); toast('สร้างบัญชีสำเร็จ! 🎉'); R();
-    }
-  };
-};
-window._sw = mode => { aMode=mode; document.getElementById('tl').classList.toggle('active',mode==='login'); document.getElementById('tr').classList.toggle('active',mode==='reg'); document.getElementById('regf').style.display=mode==='reg'?'block':'none'; document.getElementById('adminwrap').style.display=mode==='reg'?'block':'none'; document.getElementById('abtn').textContent=mode==='login'?'เข้าสู่ระบบ 🚀':'เริ่มใช้งานฟรี ✨'; };
-window._togglePin = () => { document.getElementById('pinwrap').style.display=document.getElementById('adminck').checked?'block':'none'; };
+    const analyzeFoodWithAI = async (base64Image) => {
+      const prompt = `คุณคือนักโภชนาการ AI วิเคราะห์ภาพอาหารนี้และตอบกลับเป็น JSON format เท่านั้น:
+      {
+        "name": "ชื่อเมนูอาหาร (ถ้าไม่ใช่อาหารให้ตอบ 'ไม่พบอาหาร')",
+        "calories": ตัวเลขแคลอรี่โดยประมาณ (number),
+        "sugar": "ต่ำ/ปานกลาง/สูง",
+        "sodium": "ต่ำ/ปานกลาง/สูง",
+        "fat": "ต่ำ/ปานกลาง/สูง",
+        "advice": "คำแนะนำสั้นๆ 1 ประโยค"
+      }`;
 
-const setupUser = uid => {
-  const t=today();
-  const sr=doc(db,'artifacts',AID,'public','data','stats_'+uid,t);
-  onSnapshot(sr,snap=>{ if(snap.exists())S.stats=snap.data(); else{S.stats={water:0,steps:0};setDoc(sr,{water:0,steps:0});} R(); });
-  onSnapshot(collection(db,'artifacts',AID,'public','data','progress_'+uid),snap=>{ S.progress=snap.docs.map(d=>d.data()); R(); });
-  onSnapshot(collection(db,'artifacts',AID,'public','data','logs_'+uid),snap=>{ S.logs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(l=>l.date===t).sort((a,b)=>b.timestamp-a.timestamp); R(); });
-};
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [ { text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64Image.split(',')[1] } } ] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+        const data = await response.json();
+        return JSON.parse(data.candidates[0].content.parts[0].text);
+      } catch (error) {
+        throw new Error("AI Analysis Failed");
+      }
+    };
 
-const adminHTML = () => `
-<div class="admin-wrap">
-  <div class="admin-header">
-    <div><h1 class="admin-title">Admin Control</h1><p style="font-size:13px;color:#6b7280;margin-top:4px;font-weight:600">จัดการระบบทั้งหมด</p></div>
-    <button class="icon-btn" style="float:right;margin-top:-40px" onclick="window._logout()">🚪</button>
-  </div>
-  <div class="admin-body">
-    ${S.adminTab==='users'?adminUsers():S.adminTab==='missions'?adminMissions():adminRewards()}
-  </div>
-  <nav class="bottom-nav">
-    <button class="nav-item${S.adminTab==='users'?' active':''}" onclick="window._atab('users')"><span class="nav-icon">👥</span><span>ผู้ใช้</span></button>
-    <button class="nav-item${S.adminTab==='missions'?' active':''}" onclick="window._atab('missions')"><span class="nav-icon">📋</span><span>ภารกิจ</span></button>
-    <button class="nav-item${S.adminTab==='rewards'?' active':''}" onclick="window._atab('rewards')"><span class="nav-icon">🎁</span><span>รางวัล</span></button>
-  </nav>
-</div>`;
+    // --- Seed Data ---
+    const DEFAULT_MISSIONS = [
+      { title: 'ลาขาดหวาน 1 วัน', subtitle: 'งดเครื่องดื่มและขนมหวานทุกชนิด', points: 20, maxPerDay: 1, expiresAt: '' },
+      { title: 'เดิน 30 นาที', subtitle: 'เดินออกกำลังกายต่อเนื่อง 30 นาที', points: 30, maxPerDay: 1, expiresAt: '' },
+      { title: 'กินผักผลไม้ 5 สี', subtitle: 'ทานผักและผลไม้ให้หลากหลาย', points: 25, maxPerDay: 3, expiresAt: '' },
+    ];
+    const DEFAULT_REWARDS = [
+      { title: 'คูปองตรวจสุขภาพ รพ.', points: 5000, image: '🎟️' },
+      { title: 'ชุดของขวัญสุขภาพ', points: 3500, image: '🧺' },
+      { title: 'แก้วน้ำเก็บอุณหภูมิ', points: 1500, image: '🥤' },
+    ];
 
-const adminUsers = () => `<div class="section-title">ผู้ใช้งาน (${S.leaderboard.length} คน)</div>
-${S.leaderboard.map((u,i)=>`<div class="user-row"><span style="width:24px;text-align:center;color:#ccc;font-weight:900">${i+1}</span><img src="${u.avatar}" class="avatar-sm" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/><div class="user-info"><b>${u.name}</b></div><div class="pts-badge">${(u.points||0).toLocaleString()}</div><button class="icon-btn-sm btn-green" onclick="window._editpts('${u.uid}','${u.name}',${u.points||0})">✏️</button></div>`).join('')||'<p class="empty-state">ยังไม่มีผู้ใช้</p>'}`;
+    function MainApp() {
+      const [firebaseReady, setFirebaseReady] = useState(false);
+      const [appUser, setAppUser] = useState(null);
+      const [allProfiles, setAllProfiles] = useState([]);
+      
+      const [globalMissions, setGlobalMissions] = useState([]);
+      const [globalRewards, setGlobalRewards] = useState([]);
+      const [leaderboard, setLeaderboard] = useState([]);
+      const [userProgress, setUserProgress] = useState([]); 
+      
+      const [toast, setToast] = useState(null);
+      const [confirmDialog, setConfirmDialog] = useState(null);
+      const [promptDialog, setPromptDialog] = useState(null);
 
-const adminMissions = () => `<div class="section-header"><div class="section-title">ภารกิจ</div><button class="btn-add" onclick="window._toggleM()">+ สร้างใหม่</button></div>
-${S.addMission?`<div class="add-form">
-  <input class="input-field" id="mt" placeholder="ชื่อภารกิจ"/>
-  <input class="input-field" id="ms" placeholder="คำอธิบาย"/>
-  <div class="form-row"><select class="input-field" id="mc"><option>เบาหวาน</option><option>ความดัน</option><option>หัวใจ</option></select><input class="input-field" id="mp" type="number" placeholder="แต้ม" value="10" style="width:80px"/></div>
-  <div class="form-row"><input class="input-field" id="mm" type="number" placeholder="ครั้ง/วัน" value="1" style="width:100px"/><input class="input-field" id="me" type="date" style="flex:1"/></div>
-  <button class="btn-primary" onclick="window._saveM()">บันทึก</button>
-</div>`:''}
-${S.missions.map(m=>`<div class="mission-row"><div><span class="cat-badge cat-${m.category==='เบาหวาน'?'red':m.category==='ความดัน'?'blue':'green'}">${m.category}</span><b style="display:block">${m.title}</b><small style="color:#9ca3af">🪙${m.points} | ${m.maxPerDay||1}/วัน</small></div><button class="icon-btn-sm btn-red-sm" onclick="window._delM('${m.id}')">🗑️</button></div>`).join('')}`;
+      const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+      };
 
-const adminRewards = () => `<div class="section-header"><div class="section-title">ของรางวัล</div><button class="btn-add btn-orange" onclick="window._toggleR()">+ เพิ่มใหม่</button></div>
-${S.addReward?`<div class="add-form">
-  <input class="input-field" id="rt" placeholder="ชื่อรางวัล"/>
-  <div class="form-row"><select class="input-field" id="rtype"><option value="physical">ของจริง</option><option value="virtual">ในเกม</option></select><input class="input-field" id="re" placeholder="Emoji" value="🎁" style="width:70px;text-align:center"/></div>
-  <input class="input-field" id="rp" type="number" placeholder="แต้มที่ใช้" value="500"/>
-  <button class="btn-primary" onclick="window._saveR()">บันทึก</button>
-</div>`:''}
-<div class="rewards-grid">${S.rewards.map(r=>`<div class="reward-card"><button class="reward-delete" onclick="window._delR('${r.id}')">✕</button><div style="font-size:40px;margin-bottom:8px">${r.image}</div><div style="font-weight:800;font-size:14px">${r.title}</div><div style="font-weight:900;font-size:12px;color:#f97316;margin-top:6px">${r.points} pts</div></div>`).join('')}</div>`;
+      useEffect(() => {
+        const initAuth = async () => {
+          try {
+            await signInAnonymously(auth);
+          } catch (err) { } 
+          finally { setFirebaseReady(true); }
+        };
+        initAuth();
+        const unsub = onAuthStateChanged(auth, () => { setFirebaseReady(true); });
+        return () => unsub();
+      }, []);
 
-window._atab = t => { S.adminTab=t; R(); };
-window._editpts = (uid,name,pts) => prompt_('แก้ไขคะแนน','ผู้ใช้: '+name,pts,async v=>{ if(!isNaN(v)){await updateDoc(doc(db,'artifacts',AID,'public','data','profiles',uid),{points:Number(v)});toast('อัปเดตแล้ว');} });
-window._toggleM = () => { S.addMission=S.addMission?null:true; R(); };
-window._saveM = async () => { const t=document.getElementById('mt').value; if(!t){toast('กรุณากรอกชื่อ','err');return;} await addDoc(collection(db,'artifacts',AID,'public','data','missions'),{title:t,subtitle:document.getElementById('ms').value,category:document.getElementById('mc').value,points:Number(document.getElementById('mp').value),maxPerDay:Number(document.getElementById('mm').value)||1,expiresAt:document.getElementById('me').value}); S.addMission=null; toast('เพิ่มภารกิจแล้ว'); };
-window._delM = id => confirm('ลบภารกิจนี้?',async()=>{ await deleteDoc(doc(db,'artifacts',AID,'public','data','missions',id)); toast('ลบแล้ว'); });
-window._toggleR = () => { S.addReward=S.addReward?null:true; R(); };
-window._saveR = async () => { const t=document.getElementById('rt').value; if(!t){toast('กรุณากรอกชื่อ','err');return;} await addDoc(collection(db,'artifacts',AID,'public','data','rewards'),{title:t,points:Number(document.getElementById('rp').value),image:document.getElementById('re').value,type:document.getElementById('rtype').value}); S.addReward=null; toast('เพิ่มรางวัลแล้ว'); };
-window._delR = id => confirm('ลบรางวัลนี้?',async()=>{ await deleteDoc(doc(db,'artifacts',AID,'public','data','rewards',id)); toast('ลบแล้ว'); });
+      useEffect(() => {
+        if (!firebaseReady) return;
 
-const userHTML = () => {
-  let c='';
-  if(S.showRewards) c=rewardsHTML();
-  else if(S.tab==='home') c=homeHTML();
-  else if(S.tab==='missions') c=missionsHTML();
-  else if(S.tab==='log') c=logHTML();
-  else if(S.tab==='leaderboard') c=lbHTML();
-  else if(S.tab==='profile') c=profileHTML();
-  return `<div class="user-wrap"><div class="user-body">${c}</div>${S.showRewards?'':navHTML()}</div>`;
-};
-const navHTML = () => `<nav class="bottom-nav">
-  <button class="nav-item${S.tab==='home'?' active':''}" onclick="window._tab('home')"><span class="nav-icon">🏠</span><span>หน้าแรก</span></button>
-  <button class="nav-item${S.tab==='missions'?' active':''}" style="${S.tab==='missions'?'color:#0d9488':''}" onclick="window._tab('missions')"><span class="nav-icon">🎯</span><span>ภารกิจ</span></button>
-  <button class="nav-item${S.tab==='log'?' active':''}" style="${S.tab==='log'?'color:#f43f5e':''}" onclick="window._tab('log')"><span class="nav-icon">🥗</span><span>บันทึก</span></button>
-  <button class="nav-item${S.tab==='leaderboard'?' active':''}" style="${S.tab==='leaderboard'?'color:#eab308':''}" onclick="window._tab('leaderboard')"><span class="nav-icon">🏆</span><span>อันดับ</span></button>
-  <button class="nav-item${S.tab==='profile'?' active':''}" style="${S.tab==='profile'?'color:#10b981':''}" onclick="window._tab('profile')"><span class="nav-icon">👤</span><span>โปรไฟล์</span></button>
-</nav>`;
+        const missionsRef = collection(db, 'artifacts', appId, 'public', 'data', 'missions');
+        const unsubM = onSnapshot(missionsRef, (snap) => {
+          const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (loaded.length === 0) DEFAULT_MISSIONS.forEach(m => addDoc(missionsRef, m));
+          else setGlobalMissions(loaded);
+        }, (error) => {});
 
-const homeHTML = () => {
-  const u=S.user, s=S.stats;
-  const wd=251.2-(Math.min(100,(s.water/8)*100)/100)*251.2;
-  const sd=251.2-(Math.min(100,(s.steps/10000)*100)/100)*251.2;
-  return `<div class="page-pad fade">
-    <div class="profile-row">
-      <img src="${u.avatar}" class="avatar-md" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/>
-      <div><h2 class="greeting">${u.name}</h2><p class="greeting-sub">พร้อมลุยเป้าหมายวันนี้แล้วยัง? 🔥</p></div>
-    </div>
-    <div class="points-card">
-      <div style="font-size:16px;font-weight:800">ระดับ ${u.level||1} <span style="opacity:.7;font-weight:600;font-size:14px">(สุขภาพดี)</span></div>
-      <div class="xp-bar"><div class="xp-fill"></div></div>
-      <div class="points-row"><span style="font-size:40px">🪙</span><span style="font-size:40px;font-weight:900">${(u.points||0).toLocaleString()}</span><span style="font-size:16px;opacity:.7;font-weight:600">แต้ม</span></div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">💧 ดื่มน้ำ (แก้ว)</div>
-        <div class="ring-wrap">
-          <svg width="96" height="96" viewBox="0 0 96 96" style="transform:rotate(-90deg)">
-            <circle cx="48" cy="48" r="40" fill="none" stroke="#e0f7fa" stroke-width="8"/>
-            <circle cx="48" cy="48" r="40" fill="none" stroke="#34A0A4" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="${wd}" stroke-linecap="round" style="transition:stroke-dashoffset 1s"/>
-          </svg>
-          <div class="ring-label" style="color:#34A0A4">${s.water}<span style="font-size:12px;color:#aaa">/8</span></div>
-        </div>
-        <button class="fab-btn fab-teal" onclick="window._water()">+</button>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">👟 ก้าวเดิน</div>
-        <div class="ring-wrap">
-          <svg width="96" height="96" viewBox="0 0 96 96" style="transform:rotate(-90deg)">
-            <circle cx="48" cy="48" r="40" fill="none" stroke="#ffe0e6" stroke-width="8"/>
-            <circle cx="48" cy="48" r="40" fill="none" stroke="#f43f5e" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="${sd}" stroke-linecap="round" style="transition:stroke-dashoffset 1s"/>
-          </svg>
-          <div class="ring-label" style="color:#f43f5e;font-size:16px">${s.steps.toLocaleString()}<span style="font-size:10px;color:#aaa">/10k</span></div>
-        </div>
-        <div class="step-row">
-          <input id="stepinput" class="step-input" type="number" placeholder="+ก้าว"/>
-          <button class="fab-btn fab-rose" style="position:static;border:none" onclick="window._steps()">+</button>
-        </div>
-      </div>
-    </div>
-    <button class="btn-meal" onclick="window._tab('log')">🥗 บันทึกมื้ออาหารวันนี้</button>
-  </div>`;
-};
+        const rewardsRef = collection(db, 'artifacts', appId, 'public', 'data', 'rewards');
+        const unsubR = onSnapshot(rewardsRef, (snap) => {
+          const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (loaded.length === 0) DEFAULT_REWARDS.forEach(r => addDoc(rewardsRef, r));
+          else setGlobalRewards(loaded);
+        }, (error) => {});
 
-const missionsHTML = () => {
-  const t=today();
-  const list=S.missions.filter(m=>{ if(m.expiresAt&&m.expiresAt<t)return false; if(S.filter!=='ทั้งหมด'&&m.category!==S.filter)return false; return true; });
-  const icons={เบาหวาน:'🚫',ความดัน:'👟',หัวใจ:'🥗'};
-  const colors={เบาหวาน:'#fee2e2',ความดัน:'#dbeafe',หัวใจ:'#d1fae5'};
-  return `<div class="page-pad fade">
-    <h1 class="page-title">ภารกิจสุขภาพ 🎯</h1>
-    <input type="file" id="mfile" accept="image/*" capture="environment" style="display:none" onchange="window._mphoto(event)"/>
-    <div class="filter-row">
-      ${['ทั้งหมด','เบาหวาน','ความดัน','หัวใจ'].map(f=>`<button class="filter-btn${S.filter===f?' active':''}" onclick="window._filter('${f}')">${f}</button>`).join('')}
-    </div>
-    ${list.length===0?'<p class="empty-state">ยังไม่มีภารกิจหมวดนี้</p>':list.map(m=>{
-      const done=S.progress.filter(p=>p.missionId===m.id&&p.date===t).length;
-      const max=m.maxPerDay||1;
-      const comp=done>=max;
-      return `<div class="mission-card${comp?' done':''}">
-        <div class="mission-icon" style="background:${colors[m.category]||'#f3f4f6'}">${icons[m.category]||'📝'}</div>
-        <div class="mission-content">
-          <div class="mission-title${comp?' strike':''}">${m.title}</div>
-          <div class="mission-sub">${m.subtitle||''}</div>
-          <div class="mission-footer">
-            <span class="pts-tag">🪙 +${m.points} pts <span style="font-size:11px;color:#9ca3af;background:white;padding:2px 6px;border-radius:6px;margin-left:4px;border:1px solid #e5e7eb">${done}/${max}</span></span>
-            ${comp?'<span class="done-badge">✅ สำเร็จแล้ว</span>':`<button class="btn-verify" onclick="window._startM('${m.id}')">📷 ยืนยัน</button>`}
+        const profilesRef = collection(db, 'artifacts', appId, 'public', 'data', 'profiles');
+        const unsubP = onSnapshot(profilesRef, (snap) => {
+          const loadedProfiles = snap.docs.map(d => d.data());
+          setAllProfiles(loadedProfiles);
+          
+          const currentWeekStr = getWeekStr();
+          
+          // จัดอันดับ Real-time เฉพาะคะแนนสัปดาห์นี้
+          const ranked = loadedProfiles
+            .filter(u => u.role === 'user')
+            .map(u => ({
+               ...u,
+               weeklyPoints: u.currentWeek === currentWeekStr ? (u.weeklyPoints || 0) : 0
+            }))
+            .sort((a,b) => b.weeklyPoints - a.weeklyPoints)
+            .map((u, i) => ({ ...u, rank: i + 1 }));
+            
+          setLeaderboard(ranked);
+
+          try {
+            const savedSession = localStorage.getItem('vv_uid_v12');
+            if (savedSession && !appUser) {
+              const userObj = loadedProfiles.find(u => u.uid === savedSession);
+              if (userObj) setAppUser(userObj);
+            }
+          } catch(e) {}
+
+          setAppUser(current => {
+            if (!current) return null;
+            const updated = loadedProfiles.find(u => u.uid === current.uid);
+            return updated || current;
+          });
+        }, (error) => {});
+
+        return () => { unsubM(); unsubR(); unsubP(); };
+      }, [firebaseReady]);
+
+      useEffect(() => {
+        if (!appUser?.uid || appUser.role === 'admin') return;
+        const progressRef = collection(db, 'artifacts', appId, 'public', 'data', `progress_${appUser.uid}`);
+        const unsubProgress = onSnapshot(progressRef, (snapshot) => {
+          setUserProgress(snapshot.docs.map(d => d.data()));
+        }, (error) => {});
+        return () => unsubProgress();
+      }, [appUser?.uid]);
+
+      const handleRegister = async (email, password, name, isAdminLogin, adminPin) => {
+        if (isAdminLogin && adminPin !== ADMIN_PIN) {
+          showToast('รหัสลับผู้ดูแลระบบไม่ถูกต้อง!', 'error');
+          throw new Error('รหัสลับผู้ดูแลระบบไม่ถูกต้อง!');
+        }
+        
+        const eid = cleanEmail(email);
+        const authRef = doc(db, 'artifacts', appId, 'public', 'data', 'auth', eid);
+        const docSnap = await getDoc(authRef);
+        if (docSnap.exists()) {
+          showToast('อีเมลนี้ถูกใช้งานแล้ว กรุณาล็อคอิน', 'error');
+          throw new Error('อีเมลนี้ถูกใช้งานแล้ว');
+        }
+
+        const uid = 'USR_' + Date.now() + Math.random().toString(36).substring(2, 8);
+        const role = isAdminLogin ? 'admin' : 'user';
+        const avatar = 'https://api.dicebear.com/7.x/notionists/svg?seed=' + encodeURIComponent(name);
+
+        await setDoc(authRef, { email: eid, password, uid, role });
+        const profile = { uid, name, role, points: 0, weeklyPoints: 0, currentWeek: getWeekStr(), level: 1, avatar };
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', uid), profile);
+
+        setAppUser(profile);
+        try { localStorage.setItem('vv_uid_v12', uid); } catch(e){}
+        showToast('สร้างบัญชีสำเร็จ! ยินดีต้อนรับ 🎉');
+      };
+
+      const handleLogin = async (email, password) => {
+        const eid = cleanEmail(email);
+        const authRef = doc(db, 'artifacts', appId, 'public', 'data', 'auth', eid);
+        const docSnap = await getDoc(authRef);
+        
+        if (!docSnap.exists()) {
+          showToast('ไม่พบบัญชีนี้ กรุณาสมัครสมาชิก', 'error');
+          throw new Error('ไม่พบบัญชีนี้');
+        }
+        const authData = docSnap.data();
+        if (authData.password !== password) {
+          showToast('รหัสผ่านไม่ถูกต้อง', 'error');
+          throw new Error('รหัสผ่านไม่ถูกต้อง');
+        }
+
+        const profileSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', authData.uid));
+        if (profileSnap.exists()) {
+          const profile = profileSnap.data();
+          setAppUser(profile);
+          try { localStorage.setItem('vv_uid_v12', profile.uid); } catch(e){}
+          showToast('เข้าสู่ระบบสำเร็จ! 🚀');
+        }
+      };
+
+      const handleLogout = () => {
+        setConfirmDialog({
+          text: 'คุณต้องการออกจากระบบหรือไม่?',
+          onConfirm: () => {
+            setAppUser(null);
+            try { localStorage.removeItem('vv_uid_v12'); } catch(e){}
+            showToast('ออกจากระบบเรียบร้อย');
+          }
+        });
+      };
+
+      const handleUpdateProfile = async (newName, newAvatar, newEmail, newPassword, currentAuthId) => {
+        if (!appUser) return;
+        try {
+          const updates = { name: newName };
+          if (newAvatar) updates.avatar = newAvatar;
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', appUser.uid), updates);
+
+          if (newEmail && newPassword && currentAuthId) {
+             const cleanNewEmail = cleanEmail(newEmail);
+             if (cleanNewEmail !== currentAuthId) {
+                const newAuthRef = doc(db, 'artifacts', appId, 'public', 'data', 'auth', cleanNewEmail);
+                const checkSnap = await getDoc(newAuthRef);
+                if (checkSnap.exists()) {
+                   showToast('อีเมลนี้มีผู้ใช้งานแล้ว ไม่สามารถเปลี่ยนได้', 'error');
+                   return;
+                }
+                await setDoc(newAuthRef, { email: cleanNewEmail, password: newPassword, uid: appUser.uid, role: appUser.role });
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'auth', currentAuthId));
+             } else {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'auth', currentAuthId), { password: newPassword });
+             }
+          }
+
+          showToast("อัปเดตโปรไฟล์สำเร็จ! 🌟");
+        } catch(e) { 
+          showToast("เกิดข้อผิดพลาดในการอัปเดต", "error"); 
+        }
+      };
+
+      if (!firebaseReady) return <LoadingScreen />;
+
+      return (
+        <div className="relative bg-gray-900 font-sans h-full w-full flex justify-center">
+          <div className="w-full max-w-md bg-white h-full relative overflow-hidden shadow-2xl flex flex-col">
+            {!appUser ? (
+              <AuthScreen onLogin={handleLogin} onRegister={handleRegister} />
+            ) : appUser.role === 'admin' ? (
+              <AdminApp 
+                missions={globalMissions} rewards={globalRewards} leaderboard={leaderboard} 
+                onLogout={handleLogout} db={db} appId={appId} 
+                setConfirmDialog={setConfirmDialog} setPromptDialog={setPromptDialog} showToast={showToast}
+              />
+            ) : (
+              <UserApp 
+                profile={appUser} missions={globalMissions} rewards={globalRewards} leaderboard={leaderboard}
+                userProgress={userProgress}
+                onLogout={handleLogout} onUpdateProfile={handleUpdateProfile}
+                db={db} appId={appId} setConfirmDialog={setConfirmDialog} showToast={showToast}
+              />
+            )}
+
+            {toast && (
+              <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[999] animate-slide-down w-11/12 max-w-sm">
+                <div className={`px-6 py-4 rounded-2xl font-black shadow-2xl flex items-center gap-3 text-white tracking-wide border-2 ${toast.type === 'error' ? 'bg-red-500 border-red-400' : 'bg-gray-900 border-gray-700'}`}>
+                  {toast.type === 'error' ? <AlertCircle size={24}/> : <CheckCircle size={24}/>} 
+                  <span className="flex-1 leading-tight">{toast.message}</span>
+                </div>
+              </div>
+            )}
+
+            {confirmDialog && (
+              <div className="absolute inset-0 z-[1000] bg-black/60 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+                <div className="bg-white rounded-[2.5rem] p-8 w-full text-center shadow-2xl border-[4px] border-white/20">
+                  <h3 className="text-2xl font-black text-gray-800 mb-8 leading-tight">{confirmDialog.text}</h3>
+                  <div className="flex gap-4">
+                    <button onClick={() => setConfirmDialog(null)} className="flex-1 py-4 bg-gray-100 text-gray-600 font-black rounded-[1.5rem] hover:bg-gray-200 transition">ยกเลิก</button>
+                    <button onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} className="flex-1 py-4 bg-red-500 text-white font-black rounded-[1.5rem] shadow-[0_10px_25px_rgba(239,68,68,0.4)] hover:scale-[1.02] active:scale-95 transition">ยืนยัน</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {promptDialog && (
+              <div className="absolute inset-0 z-[1000] bg-black/60 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+                <div className="bg-white rounded-[2.5rem] p-8 w-full shadow-2xl border-[4px] border-white/20">
+                  <h3 className="text-2xl font-black text-gray-800 mb-2">{promptDialog.title}</h3>
+                  <p className="text-sm font-bold text-gray-500 mb-6">{promptDialog.description}</p>
+                  <input 
+                    type="number" autoFocus id="prompt-input" defaultValue={promptDialog.defaultValue} 
+                    className="w-full bg-gray-50 border-2 border-teal-400 rounded-2xl p-4 text-center text-3xl font-black text-teal-600 outline-none mb-6 shadow-inner" 
+                  />
+                  <div className="flex gap-4">
+                    <button onClick={() => setPromptDialog(null)} className="flex-1 py-4 bg-gray-100 text-gray-600 font-black rounded-[1.5rem] hover:bg-gray-200 transition">ยกเลิก</button>
+                    <button onClick={() => { 
+                      const val = document.getElementById('prompt-input').value;
+                      promptDialog.onConfirm(val); 
+                      setPromptDialog(null); 
+                    }} className="flex-1 py-4 bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-black rounded-[1.5rem] shadow-[0_10px_25px_rgba(20,184,166,0.4)] hover:scale-[1.02] active:scale-95 transition">บันทึก</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>`;
-    }).join('')}
-  </div>`;
-};
-
-const logHTML = () => {
-  const ai=S.aiResult;
-  const tabs=[{id:'morning',l:'เช้า',i:'☀️'},{id:'lunch',l:'กลางวัน',i:'🍴'},{id:'dinner',l:'เย็น',i:'🌙'},{id:'snack',l:'ว่าง',i:'🍎'}];
-  return `<div class="fade">
-    <div class="food-header"><h1 class="page-title" style="margin:0">บันทึกอาหารด้วย AI 🤖</h1></div>
-    <div class="meal-tabs">${tabs.map(t=>`<button class="meal-tab${S.meal===t.id?' active':''}" onclick="window._meal('${t.id}')">${t.i} ${t.l}</button>`).join('')}</div>
-    <div style="padding:12px 20px 20px">
-      <input type="file" id="ffile" accept="image/*" style="display:none" onchange="window._fphoto(event)"/>
-      <div class="photo-zone${S.foodImg?' has-image':''}" onclick="document.getElementById('ffile').click()" style="${S.foodImg?'border:none':''}">
-        ${S.analyzing?'<div class="analyzing">✨ AI กำลังวิเคราะห์...</div>':S.foodImg?`<img src="${S.foodImg}" style="width:100%;height:100%;object-fit:cover;border-radius:20px"/>`:'<div class="photo-placeholder"><div class="camera-icon">📷</div><div style="font-weight:800;color:#f43f5e;font-size:18px">ถ่ายรูปให้ AI วิเคราะห์</div><div style="font-size:12px;color:#aaa;margin-top:4px">แคลอรี่ หวาน เค็ม ประเมินอัตโนมัติ</div></div>'}
-      </div>
-      ${ai?`<div class="ai-result"><div style="font-weight:800;margin-bottom:12px">✨ ผลวิเคราะห์ AI:</div>
-        <div class="ai-grid">
-          <div class="ai-item"><div class="ai-val">${ai.calories}</div><div class="ai-key">แคลอรี่</div></div>
-          <div class="ai-item"><div class="ai-val${ai.sugar==='สูง'?'':' green'}">${ai.sugar}</div><div class="ai-key">ความหวาน</div></div>
-          <div class="ai-item"><div class="ai-val${ai.sodium==='สูง'?'':' green'}">${ai.sodium}</div><div class="ai-key">ความเค็ม</div></div>
-        </div>
-        <div class="ai-advice">"${ai.advice}"</div>
-      </div>`:''}
-      <input class="input-field" id="fname" placeholder="ชื่อเมนูอาหาร" value="${S.foodName}" oninput="S.foodName=this.value"/>
-      <textarea class="input-field" id="fnote" placeholder="พฤติกรรมการปรุง เช่น ไม่ใส่น้ำตาล" rows="2" style="resize:none">${S.foodNote}</textarea>
-      <button class="btn-primary" style="background:linear-gradient(135deg,#f43f5e,#fb923c)" onclick="window._savemeal()">💾 บันทึกมื้อนี้</button>
-      ${S.logs.length>0?`<h3 style="font-weight:800;margin:20px 0 12px">ประวัติวันนี้</h3><div class="log-list">${S.logs.map(l=>`<div class="log-item"><div class="log-img">${l.image?`<img src="${l.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/>`:'🍽️'}</div><div><div style="font-weight:800">${l.name}</div>${l.ai_data?`<div style="font-size:11px;color:#f97316;background:#fff7ed;padding:2px 8px;border-radius:6px;display:inline-block;margin-top:4px">🔥 ${l.ai_data.calories} kcal</div>`:''}</div></div>`).join('')}</div>`:''}
-    </div>
-  </div>`;
-};
-
-const lbHTML = () => {
-  const me=S.leaderboard.find(u=>u.uid===S.user.uid);
-  return `<div class="lb-wrap fade">
-    <div style="text-align:center;padding:48px 20px 24px">
-      <h1 style="font-size:40px;font-weight:900;color:#111;margin:0">Leaderboard</h1>
-    </div>
-    <div style="padding:0 16px">
-      ${S.leaderboard.slice(0,10).map(u=>`<div class="lb-row${u.uid===S.user.uid?' me':''}">
-        <div style="width:36px;text-align:center;font-size:24px;font-weight:900;color:#d1d5db">${u.rank<=3?['🥇','🥈','🥉'][u.rank-1]:u.rank}</div>
-        <img src="${u.avatar}" class="lb-avatar" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/>
-        <div style="flex:1;min-width:0"><div class="lb-name">${u.name}${u.uid===S.user.uid?'<span class="you-badge">คุณ</span>':''}</div><div class="lb-pts">${(u.points||0).toLocaleString()} pts</div></div>
-      </div>`).join('')||'<p class="empty-state">ยังไม่มีผู้ใช้งาน</p>'}
-    </div>
-    ${me?`<div class="my-rank"><img src="${me.avatar}" class="lb-avatar" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/><div><div style="font-size:11px;color:#93c5fd;font-weight:700">อันดับของคุณ</div><div style="font-size:28px;font-weight:900;color:white"># ${me.rank}</div></div><div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:#93c5fd;font-weight:700">คะแนนรวม</div><div style="font-size:24px;font-weight:900;color:#fde68a">${(me.points||0).toLocaleString()}</div></div></div>`:''}
-  </div>`;
-};
-
-const profileHTML = () => {
-  const u=S.user;
-  return `<div class="page-pad fade">
-    <div class="profile-card">
-      <img src="${u.avatar}" class="avatar-lg" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/>
-      <h2 style="font-size:28px;font-weight:900;color:#111;margin:12px 0 4px">${u.name}</h2>
-      <div class="lv-badge">⭐ Level ${u.level||1} Explorer</div>
-      <button class="btn-edit" onclick="window._editOpen()">✏️ แก้ไขโปรไฟล์</button>
-    </div>
-    ${S.editMode?`<div class="edit-overlay"><div class="edit-modal"><button class="close-btn" onclick="window._editClose()">✕</button><h3 style="font-weight:900;font-size:24px;text-align:center;margin-bottom:24px">แก้ไขข้อมูล</h3><input type="file" id="avfile" accept="image/*" style="display:none" onchange="window._avchange(event)"/><div style="position:relative;width:120px;height:120px;margin:0 auto 20px;cursor:pointer" onclick="document.getElementById('avfile').click()"><img id="avprev" src="${S.editAvatar||u.avatar}" class="avatar-lg" style="width:120px;height:120px" onerror="this.src='https://api.dicebear.com/7.x/notionists/svg?seed=x'"/></div><input class="input-field" id="ename" type="text" value="${S.editName||u.name}" placeholder="ชื่อแสดงผล"/><button class="btn-primary" onclick="window._saveProfile()">💾 บันทึก</button></div></div>`:''}
-    <div class="weekly-card"><h3 style="font-weight:800;margin-bottom:16px">📊 สรุปรายสัปดาห์ (AI)</h3><div class="eval-row"><div class="eval-item"><div style="font-size:32px">🍬</div><div>ลดหวาน</div><div>⭐⭐⭐⭐☆</div></div><div class="eval-item"><div style="font-size:32px">🧂</div><div>ลดเค็ม</div><div>⭐⭐⭐⭐⭐</div></div><div class="eval-item"><div style="font-size:32px">💧</div><div>ลดมัน</div><div>⭐⭐⭐☆☆</div></div></div><div class="ai-advice">"สัปดาห์นี้ลดเค็มได้เยี่ยม! รักษาระดับนี้นะครับ 👏"</div></div>
-    <div class="badges-card"><h3 style="font-weight:800;margin-bottom:16px">🏅 รางวัลความสำเร็จ</h3><div class="badges-row"><div class="badge-item"><div class="badge-icon" style="background:#dbeafe">🛡️</div><div class="badge-name">นักลดเค็มมือโปร</div></div><div class="badge-item"><div class="badge-icon" style="background:#d1fae5">🏅</div><div class="badge-name">พิชิต 7 วัน</div></div><div class="badge-item" style="opacity:.4;filter:grayscale(1)"><div class="badge-icon" style="background:#f3f4f6">🏃</div><div class="badge-name">แสนก้าว</div></div></div></div>
-    <button class="btn-rewards" onclick="S.showRewards=true;R()">🎁 ร้านค้าแลกของรางวัล</button>
-    <button class="btn-logout" onclick="window._logout()">🚪 ออกจากระบบ</button>
-  </div>`;
-};
-
-const rewardsHTML = () => {
-  const tab=S.rewardsTab||'virtual';
-  const list=S.rewards.filter(r=>r.type===tab);
-  return `<div class="rewards-wrap fade">
-    <div class="rewards-header"><button class="back-btn" onclick="S.showRewards=false;R()">←</button><h1 style="font-weight:900;font-size:20px;margin:0">แลกของรางวัล</h1></div>
-    <div style="text-align:center;padding:24px;border-bottom:1px solid #f0f0f0"><div style="color:#888;font-weight:700;font-size:12px;margin-bottom:8px">คะแนนคงเหลือ</div><div style="font-size:52px;font-weight:900">🪙 ${(S.user.points||0).toLocaleString()}</div></div>
-    <div style="display:flex;gap:4px;margin:16px;background:#f5f5f5;padding:4px;border-radius:14px">
-      <button class="tab-btn${tab==='virtual'?' active':''}" onclick="S.rewardsTab='virtual';R()">ในเกม (Virtual)</button>
-      <button class="tab-btn${tab==='physical'?' active':''}" onclick="S.rewardsTab='physical';R()">ของจริง (Physical)</button>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding:0 16px 80px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start">
-      ${list.length===0?'<p class="empty-state" style="grid-column:1/-1">ยังไม่มีรางวัลหมวดนี้</p>':list.map(r=>`<div class="reward-big-card"><div style="font-size:52px;margin:8px 0">${r.image}</div><div style="font-weight:800;font-size:13px;margin-bottom:auto">${r.title}</div><button class="redeem-btn" onclick="window._redeem('${r.id}','${r.title}','${r.image}',${r.points})">แลกเลย ${r.points.toLocaleString()}</button></div>`).join('')}
-    </div>
-  </div>`;
-};
-
-window._tab = t => { S.tab=t; R(); };
-window._logout = () => confirm('คุณต้องการออกจากระบบ?',()=>{ S.user=null; try{localStorage.removeItem('vv_uid_v10');}catch(e){} toast('ออกจากระบบแล้ว'); R(); });
-window._water = async () => { if(S.stats.water>=8){toast('ดื่มน้ำครบ 8 แก้วแล้ว! 💧');return;} await updateDoc(doc(db,'artifacts',AID,'public','data','stats_'+S.user.uid,today()),{water:S.stats.water+1}); };
-window._steps = async () => { const v=parseInt(document.getElementById('stepinput')?.value||0); if(!v||v<=0)return; await updateDoc(doc(db,'artifacts',AID,'public','data','stats_'+S.user.uid,today()),{steps:S.stats.steps+v}); S.stepVal=''; };
-window._filter = f => { S.filter=f; R(); };
-window._meal = m => { S.meal=m; R(); };
-
-let pendM=null;
-window._startM = id => { pendM=id; document.getElementById('mfile').click(); };
-window._mphoto = async e => {
-  const file=e.target.files[0]; if(!file||!pendM)return;
-  const m=S.missions.find(x=>x.id===pendM); if(!m)return;
-  const t=today();
-  const done=S.progress.filter(p=>p.missionId===m.id&&p.date===t).length;
-  if(done>=(m.maxPerDay||1)){toast('ทำครบโควต้าแล้ว!','err');return;}
-  toast('AI กำลังตรวจสอบ... รอสักครู่');
-  const b64=await resize(file);
-  setTimeout(async()=>{
-    await addDoc(collection(db,'artifacts',AID,'public','data','progress_'+S.user.uid),{missionId:m.id,date:t,timestamp:Date.now(),image:b64});
-    await updateDoc(doc(db,'artifacts',AID,'public','data','profiles',S.user.uid),{points:(S.user.points||0)+m.points});
-    toast('ยืนยันสำเร็จ! ได้รับ '+m.points+' แต้ม 🎉');
-    e.target.value=''; pendM=null;
-  },2000);
-};
-
-window._fphoto = async e => {
-  const file=e.target.files[0]; if(!file)return;
-  S.analyzing=true; S.aiResult=null; S.foodImg=null; R();
-  try {
-    const b64=await resize(file);
-    S.foodImg=b64;
-    const result=await aiFood(b64);
-    S.aiResult=result;
-    S.foodName=result.name!=='ไม่พบอาหาร'?result.name:'';
-  } catch(err) { toast('AI ขัดข้อง กรอกข้อมูลเองได้เลย','err'); }
-  S.analyzing=false; R();
-};
-window._savemeal = async () => {
-  const name=document.getElementById('fname')?.value||S.foodName;
-  const note=document.getElementById('fnote')?.value||S.foodNote;
-  if(!name&&!S.foodImg){toast('กรุณาระบุชื่ออาหารหรือถ่ายรูป','err');return;}
-  await addDoc(collection(db,'artifacts',AID,'public','data','logs_'+S.user.uid),{meal:S.meal,name:name||'เมนูระบุไม่ได้',note,image:S.foodImg,ai_data:S.aiResult||null,date:today(),timestamp:Date.now()});
-  S.foodName=''; S.foodNote=''; S.foodImg=null; S.aiResult=null;
-  toast('บันทึกมื้ออาหารสำเร็จ! 🥗');
-};
-window._editOpen = () => { S.editMode=true; S.editName=S.user.name; S.editAvatar=S.user.avatar; R(); };
-window._editClose = () => { S.editMode=false; R(); };
-window._avchange = async e => { const f=e.target.files[0]; if(f){const b64=await resize(f,200);S.editAvatar=b64;const el=document.getElementById('avprev');if(el)el.src=b64;} };
-window._saveProfile = async () => { const n=document.getElementById('ename')?.value; if(!n){toast('กรุณาใส่ชื่อ','err');return;} await updateDoc(doc(db,'artifacts',AID,'public','data','profiles',S.user.uid),{name:n,avatar:S.editAvatar||S.user.avatar}); S.editMode=false; toast('อัปเดตโปรไฟล์แล้ว! 🌟'); };
-window._redeem = (id,title,image,points) => {
-  if((S.user.points||0)<points){toast('คะแนนไม่พอ!','err');return;}
-  confirm('ยืนยันแลก "'+title+'" ด้วย '+points+' แต้ม?',async()=>{
-    await updateDoc(doc(db,'artifacts',AID,'public','data','profiles',S.user.uid),{points:(S.user.points||0)-points});
-    document.getElementById('success-modal').style.display='flex';
-    document.getElementById('success-title').textContent=image+' '+title;
-    S.showRewards=false;
-  });
-};
-
-// INIT
-R();
-signInAnonymously(auth).catch(e=>console.log('auth:',e));
-onAuthStateChanged(auth, async firebaseUser => {
-  if (!firebaseUser) return;
-  onSnapshot(collection(db,'artifacts',AID,'public','data','missions'),snap=>{
-    const d=snap.docs.map(x=>({id:x.id,...x.data()}));
-    if(d.length===0){[{title:'ลาขาดหวาน 1 วัน',subtitle:'งดเครื่องดื่มและขนมหวาน',points:20,category:'เบาหวาน',maxPerDay:1,expiresAt:''},{title:'เดิน 30 นาที',subtitle:'เดินออกกำลังกาย 30 นาที',points:30,category:'ความดัน',maxPerDay:1,expiresAt:''},{title:'กินผักผลไม้ 5 สี',subtitle:'ทานผักผลไม้หลากหลาย',points:25,category:'หัวใจ',maxPerDay:3,expiresAt:''}].forEach(m=>addDoc(collection(db,'artifacts',AID,'public','data','missions'),m));}
-    else{S.missions=d;R();}
-  });
-  onSnapshot(collection(db,'artifacts',AID,'public','data','rewards'),snap=>{
-    const d=snap.docs.map(x=>({id:x.id,...x.data()}));
-    if(d.length===0){[{title:'คูปองตรวจสุขภาพ',points:5000,image:'🎟️',type:'physical'},{title:'ชุดของขวัญสุขภาพ',points:3500,image:'🧺',type:'physical'},{title:'แก้วน้ำเก็บอุณหภูมิ',points:1500,image:'🥤',type:'physical'},{title:'กรอบโปรไฟล์พิเศษ',points:500,image:'🖼️',type:'virtual'},{title:'ตราสัญลักษณ์ VIP',points:1000,image:'👑',type:'virtual'}].forEach(r=>addDoc(collection(db,'artifacts',AID,'public','data','rewards'),r));}
-    else{S.rewards=d;R();}
-  });
-  onSnapshot(collection(db,'artifacts',AID,'public','data','profiles'),snap=>{
-    const ps=snap.docs.map(d=>d.data());
-    S.leaderboard=ps.filter(u=>u.role==='user').sort((a,b)=>b.points-a.points).map((u,i)=>({...u,rank:i+1}));
-    if(S.user){const up=ps.find(u=>u.uid===S.user.uid);if(up)S.user=up;}
-    R();
-  });
-  try {
-    const saved=localStorage.getItem('vv_uid_v10');
-    if(saved&&!S.user){
-      const snap=await getDoc(doc(db,'artifacts',AID,'public','data','profiles',saved));
-      if(snap.exists()){S.user=snap.data();if(S.user.role==='user')setupUser(S.user.uid);R();}
+      );
     }
-  } catch(e){}
-});
-</script>
+
+    // ==========================================
+    // 1. AUTH SCREEN
+    // ==========================================
+    function AuthScreen({ onLogin, onRegister }) {
+      const [isLogin, setIsLogin] = useState(true);
+      const [isAdminLogin, setIsAdminLogin] = useState(false);
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [name, setName] = useState('');
+      const [adminPin, setAdminPin] = useState('');
+      const [loading, setLoading] = useState(false);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+          if (isLogin) await onLogin(email, password);
+          else {
+            if (!name.trim()) throw new Error('กรุณากรอกชื่อของคุณ');
+            await onRegister(email, password, name, isAdminLogin, adminPin);
+          }
+        } catch (err) { } 
+        finally { setLoading(false); }
+      };
+
+      return (
+        <div className="h-full w-full bg-gradient-to-br from-[#84fab0] via-[#8fd3f4] to-[#a1c4fd] p-6 relative overflow-y-auto hide-scrollbar">
+          <div className="absolute top-[-5%] left-[-10%] w-64 h-64 bg-teal-300 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+          <div className="absolute bottom-[10%] right-[-10%] w-64 h-64 bg-emerald-300 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+
+          <div className="bg-white/95 backdrop-blur-xl rounded-[3rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.1)] text-center border-[4px] border-white relative z-10 mt-6 pb-12">
+            <div className="w-24 h-24 bg-gradient-to-tr from-teal-400 to-emerald-500 text-white rounded-[2.5rem] shadow-[0_15px_30px_rgba(16,185,129,0.3)] flex items-center justify-center mx-auto mb-6 transform rotate-3">
+              <HeartPulse size={48} strokeWidth={2.5} />
+            </div>
+            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500 tracking-tight mb-2">VitalVibe</h1>
+            <p className="text-gray-500 font-bold mb-8">คอมมูนิตี้คนรักสุขภาพ 🌟</p>
+
+            <form onSubmit={handleSubmit} className="space-y-4 text-left">
+              <div className="flex bg-gray-100 p-1.5 rounded-[1.2rem] mb-6 shadow-inner">
+                <button type="button" onClick={() => setIsLogin(true)} className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all ${isLogin ? 'bg-white text-teal-600 shadow-md' : 'text-gray-400 hover:text-gray-600'}`}>เข้าสู่ระบบ</button>
+                <button type="button" onClick={() => setIsLogin(false)} className={`flex-1 py-3.5 text-sm font-black rounded-xl transition-all ${!isLogin ? 'bg-white text-teal-600 shadow-md' : 'text-gray-400 hover:text-gray-600'}`}>สร้างบัญชีใหม่</button>
+              </div>
+
+              {!isLogin && (
+                <div className="relative animate-fade-in">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input type="text" placeholder="ชื่อที่ใช้แสดงผล" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-gray-50 border-2 border-transparent focus:border-teal-400 rounded-2xl p-4 pl-12 text-gray-800 font-bold outline-none transition" />
+                </div>
+              )}
+
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input type="email" placeholder="อีเมล (E-mail)" required value={email} onChange={e=>setEmail(e.target.value)} className="w-full bg-gray-50 border-2 border-transparent focus:border-teal-400 rounded-2xl p-4 pl-12 text-gray-800 font-bold outline-none transition" />
+              </div>
+
+              <div className="relative">
+                <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input type="password" placeholder="รหัสผ่าน (Password)" required minLength="6" value={password} onChange={e=>setPassword(e.target.value)} className="w-full bg-gray-50 border-2 border-transparent focus:border-teal-400 rounded-2xl p-4 pl-12 text-gray-800 font-bold outline-none transition" />
+              </div>
+
+              {!isLogin && (
+                <label className="flex items-center justify-center gap-2 text-sm text-gray-400 font-bold cursor-pointer pt-2">
+                  <input type="checkbox" checked={isAdminLogin} onChange={(e) => setIsAdminLogin(e.target.checked)} className="w-4 h-4 rounded text-teal-500" />
+                  สมัครในฐานะผู้ดูแลระบบ (Admin)
+                </label>
+              )}
+
+              {!isLogin && isAdminLogin && (
+                <div className="relative animate-fade-in pb-2">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400" size={20} />
+                  <input type="password" placeholder="รหัสลับแอดมิน" required value={adminPin} onChange={e=>setAdminPin(e.target.value)} className="w-full bg-red-50 border-2 border-red-200 focus:border-red-500 rounded-2xl p-4 pl-12 text-red-800 font-black outline-none tracking-widest" />
+                </div>
+              )}
+              
+              <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-teal-400 to-emerald-500 text-white rounded-2xl py-4 text-lg font-black shadow-[0_10px_30px_rgba(16,185,129,0.4)] mt-2 hover:scale-[1.02] disabled:opacity-50 active:scale-95 transition-all">
+                {loading ? 'กำลังตรวจสอบ...' : (isLogin ? 'เข้าสู่ระบบ 🚀' : 'เริ่มใช้งานฟรี ✨')}
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 2. ADMIN APP 
+    // ==========================================
+    function AdminApp({ missions, rewards, leaderboard, onLogout, db, appId, setConfirmDialog, setPromptDialog, showToast }) {
+      const [activeTab, setActiveTab] = useState('users');
+
+      return (
+        <div className="h-full flex flex-col bg-gray-50">
+          <header className="bg-gray-900 text-white px-6 pt-12 pb-6 shadow-xl rounded-b-[2.5rem] z-10 relative overflow-hidden flex-shrink-0">
+            <div className="absolute top-[-50%] right-[-10%] w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20"></div>
+            <div className="flex justify-between items-center relative z-10">
+              <div>
+                <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 tracking-tight">Admin Control</h1>
+                <p className="text-sm font-bold text-gray-400 mt-1">จัดการระบบทั้งหมด</p>
+              </div>
+              <button onClick={onLogout} className="w-12 h-12 bg-gray-800 border border-gray-700 rounded-full flex items-center justify-center hover:bg-gray-700 transition shadow-inner"><LogOut size={20} className="text-red-400" /></button>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto p-6 pb-24 hide-scrollbar">
+            {activeTab === 'users' && <AdminUsers leaderboard={leaderboard} db={db} appId={appId} setPromptDialog={setPromptDialog} showToast={showToast} setConfirmDialog={setConfirmDialog}/>}
+            {activeTab === 'missions' && <AdminMissions missions={missions} db={db} appId={appId} setConfirmDialog={setConfirmDialog} showToast={showToast} />}
+            {activeTab === 'rewards' && <AdminRewards rewards={rewards} db={db} appId={appId} setConfirmDialog={setConfirmDialog} showToast={showToast} />}
+          </main>
+
+          <nav className="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-100 flex justify-around items-center py-3 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-20">
+            <NavItem icon={<Users size={24} />} label="ผู้ใช้งาน" active={activeTab === 'users'} onClick={() => setActiveTab('users')} color="text-blue-500" />
+            <NavItem icon={<ClipboardList size={24} />} label="ภารกิจ" active={activeTab === 'missions'} onClick={() => setActiveTab('missions')} color="text-emerald-500" />
+            <NavItem icon={<Gift size={24} />} label="รางวัล" active={activeTab === 'rewards'} onClick={() => setActiveTab('rewards')} color="text-teal-500" />
+          </nav>
+        </div>
+      );
+    }
+
+    function AdminUsers({ leaderboard, db, appId, setPromptDialog, showToast, setConfirmDialog }) {
+      const [viewingUser, setViewingUser] = useState(null); 
+
+      // แอดมินแก้คะแนนกระเป๋าตังค์ (รวม)
+      const handleEditPoints = (user) => {
+        setPromptDialog({
+          title: 'แก้ไขคะแนนสะสม (Wallet)',
+          description: `ปรับคะแนนคงเหลือของ: ${user.name}`,
+          defaultValue: user.points || 0,
+          onConfirm: async (newVal) => {
+            if (!isNaN(newVal) && newVal !== '') {
+              await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', user.uid), { points: Number(newVal) });
+              showToast('อัปเดตคะแนนเรียบร้อยแล้ว!');
+            }
+          }
+        });
+      };
+
+      return (
+        <div className="animate-fade-in space-y-4">
+          <h2 className="text-2xl font-black text-gray-800">จัดการผู้ใช้งาน</h2>
+          <p className="text-gray-500 font-bold text-sm bg-blue-50 p-4 rounded-2xl border border-blue-100 shadow-sm leading-relaxed">
+            💡 กด <Eye size={14} className="inline text-blue-500"/> ดูข้อมูลและจัดการประวัติสุขภาพ/แจ้งเตือน<br/>
+            💡 กด <Edit size={14} className="inline text-emerald-500"/> ปรับเพิ่มลดคะแนนสะสม
+          </p>
+          
+          <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+            {leaderboard.map((user, idx) => (
+              <div key={user.uid} className="p-4 border-b border-gray-50 last:border-0 flex items-center justify-between hover:bg-gray-50 transition">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 text-center text-gray-300 font-black text-lg">{idx + 1}</div>
+                  {user.avatar?.startsWith('http') || user.avatar?.startsWith('data:') ? <img src={user.avatar} className="w-12 h-12 rounded-[1rem] object-cover border border-gray-200 shadow-sm"/> : <div className="w-12 h-12 bg-gray-100 rounded-[1rem] flex items-center justify-center text-2xl shadow-inner">{user.avatar || '👤'}</div>}
+                  <div>
+                    <h4 className="font-extrabold text-gray-800 text-base leading-tight max-w-[100px] truncate">{user.name}</h4>
+                    <p className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-1">Lv.{user.level || 1}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                   <div className="text-right mr-1">
+                     <div className="font-black text-blue-600 text-lg">{user.points?.toLocaleString() || 0}</div>
+                     <div className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Points</div>
+                   </div>
+                   <button onClick={() => setViewingUser(user)} className="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-500 hover:text-white hover:bg-blue-500 rounded-[1rem] shadow-sm transition active:scale-95">
+                     <Eye size={16}/>
+                   </button>
+                   <button onClick={() => handleEditPoints(user)} className="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-500 hover:text-white hover:bg-emerald-500 rounded-[1rem] shadow-sm transition active:scale-95">
+                     <Edit size={16}/>
+                   </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {viewingUser && <UserHealthModal user={viewingUser} onClose={() => setViewingUser(null)} db={db} appId={appId} showToast={showToast} setConfirmDialog={setConfirmDialog}/>}
+        </div>
+      );
+    }
+
+    function UserHealthModal({ user, onClose, db, appId, showToast, setConfirmDialog }) {
+      const [stats, setStats] = useState({ water: 0, steps: 0 });
+      const [logs, setLogs] = useState([]);
+      const [healthLogs, setHealthLogs] = useState([]);
+      const [reminders, setReminders] = useState([]);
+      const [activeTab, setActiveTab] = useState('health'); 
+      const todayStr = getTodayStr();
+
+      // Form for New Reminder (กลับมาเป็นแบบเรียบง่าย)
+      const [reminderForm, setReminderForm] = useState({ type: 'medication', title: '', date: '', time: '', note: '' });
+      const [hForm, setHForm] = useState({ weight: '', bp: '', sugar: '', note: '' });
+
+      useEffect(() => {
+        const statsRef = doc(db, 'artifacts', appId, 'public', 'data', `stats_${user.uid}`, todayStr);
+        const unsubStats = onSnapshot(statsRef, (docSnap) => { if (docSnap.exists()) setStats(docSnap.data()); }, (error)=>{});
+
+        const logsRef = collection(db, 'artifacts', appId, 'public', 'data', `logs_${user.uid}`);
+        const unsubLogs = onSnapshot(logsRef, (snapshot) => {
+          const allLogs = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+          setLogs(allLogs.filter(l => l.date === todayStr).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+
+        const hLogsRef = collection(db, 'artifacts', appId, 'public', 'data', `health_${user.uid}`);
+        const unsubHLogs = onSnapshot(hLogsRef, (snapshot) => {
+          setHealthLogs(snapshot.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+
+        const remRef = collection(db, 'artifacts', appId, 'public', 'data', `reminders_${user.uid}`);
+        const unsubRem = onSnapshot(remRef, (snapshot) => {
+          setReminders(snapshot.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+
+        return () => { unsubStats(); unsubLogs(); unsubHLogs(); unsubRem(); };
+      }, [user.uid, db, appId, todayStr]);
+
+      const handleAddReminder = async () => {
+        if (!reminderForm.title || !reminderForm.date) return showToast('กรุณากรอกชื่อและวันที่ให้ครบ', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `reminders_${user.uid}`), {
+          ...reminderForm,
+          timestamp: Date.now()
+        });
+        showToast('เพิ่มการแจ้งเตือนสำเร็จ');
+        setReminderForm({ type: 'medication', title: '', date: '', time: '', note: '' });
+      };
+
+      const handleDeleteReminder = (id) => {
+        setConfirmDialog({ text: 'ลบการแจ้งเตือนนี้ใช่หรือไม่?', onConfirm: async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', `reminders_${user.uid}`, id));
+            showToast('ลบเรียบร้อย');
+        }});
+      };
+
+      const handleAdminSaveHealth = async () => {
+        if (!hForm.weight && !hForm.bp && !hForm.sugar) return showToast('กรุณากรอกข้อมูลอย่างน้อย 1 ช่อง', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `health_${user.uid}`), {
+          ...hForm, date: todayStr, timestamp: Date.now()
+        });
+        setHForm({ weight: '', bp: '', sugar: '', note: '' });
+        showToast('แอดมินบันทึกข้อมูลสุขภาพให้ผู้ใช้สำเร็จ! ❤️');
+      };
+
+      return (
+        <div className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
+          <div className="bg-white rounded-[2rem] w-full max-h-[85vh] flex flex-col shadow-2xl border-[4px] border-white/20 overflow-hidden">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
+              <h3 className="text-lg font-black text-gray-800 flex items-center gap-2"><Activity size={18} className="text-blue-500"/> ข้อมูล: {user.name}</h3>
+              <button onClick={onClose} className="p-2 bg-gray-200 rounded-full text-gray-500 hover:bg-gray-300 transition"><X size={16}/></button>
+            </div>
+            
+            <div className="flex bg-white border-b border-gray-100 flex-shrink-0">
+               <button onClick={()=>setActiveTab('health')} className={`flex-1 py-3 text-sm font-black ${activeTab==='health'?'text-emerald-600 border-b-2 border-emerald-600':'text-gray-400'}`}>บันทึกสุขภาพ</button>
+               <button onClick={()=>setActiveTab('daily')} className={`flex-1 py-3 text-sm font-black ${activeTab==='daily'?'text-blue-600 border-b-2 border-blue-600':'text-gray-400'}`}>ประจำวัน</button>
+               <button onClick={()=>setActiveTab('reminders')} className={`flex-1 py-3 text-sm font-black ${activeTab==='reminders'?'text-rose-600 border-b-2 border-rose-600':'text-gray-400'}`}>นัด/ยา</button>
+            </div>
+
+            <div className="p-5 overflow-y-auto flex-1 hide-scrollbar bg-gray-50/50">
+              {activeTab === 'daily' && (
+                <div className="animate-fade-in space-y-6">
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">สถิติวันนี้ ({todayStr})</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white p-4 rounded-[1.5rem] border border-gray-100 shadow-sm text-center">
+                        <Droplet size={24} className="text-[#34A0A4] mx-auto mb-2"/>
+                        <p className="text-[10px] font-black text-gray-400 uppercase">ดื่มน้ำ (แก้ว)</p>
+                        <p className="font-black text-2xl text-[#34A0A4]">{stats.water}<span className="text-sm">/8</span></p>
+                      </div>
+                      <div className="bg-white p-4 rounded-[1.5rem] border border-gray-100 shadow-sm text-center">
+                        <Footprints size={24} className="text-rose-500 mx-auto mb-2"/>
+                        <p className="text-[10px] font-black text-gray-400 uppercase">ก้าวเดิน</p>
+                        <p className="font-black text-2xl text-rose-500">{stats.steps}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-3">บันทึกอาหารวันนี้</h4>
+                    <div className="space-y-3">
+                      {logs.map(log => (
+                        <div key={log.id} className="bg-white border border-gray-100 rounded-[1.5rem] p-3 flex gap-3 shadow-sm items-center">
+                          <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border">
+                            {log.image ? <img src={log.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-xl">🍽️</div>}
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-extrabold text-gray-800 text-sm leading-tight">{log.name}</h5>
+                            {log.ai_data && <p className="text-[10px] font-black text-orange-500 mt-1 bg-orange-50 inline-block px-2 py-0.5 rounded-md border border-orange-100">🔥 {log.ai_data.calories} kcal</p>}
+                          </div>
+                        </div>
+                      ))}
+                      {logs.length === 0 && <p className="text-center text-xs font-bold text-gray-400 py-4">ยังไม่มีการบันทึกอาหาร</p>}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'health' && (
+                <div className="animate-fade-in space-y-4">
+                  <div className="bg-white p-4 rounded-2xl shadow-sm border-2 border-emerald-100">
+                    <h4 className="font-bold text-emerald-600 mb-3 text-sm flex items-center gap-1"><Plus size={16}/> เพิ่มประวัติให้ผู้ใช้</h4>
+                    <div className="grid grid-cols-3 gap-2 mb-2">
+                      <input type="number" step="0.1" placeholder="น้ำหนัก" value={hForm.weight} onChange={e=>setHForm({...hForm, weight: e.target.value})} className="p-2 rounded-xl bg-gray-50 border border-gray-200 outline-none text-xs text-center font-bold" />
+                      <input type="text" placeholder="ความดัน" value={hForm.bp} onChange={e=>setHForm({...hForm, bp: e.target.value})} className="p-2 rounded-xl bg-gray-50 border border-gray-200 outline-none text-xs text-center font-bold" />
+                      <input type="number" placeholder="น้ำตาล" value={hForm.sugar} onChange={e=>setHForm({...hForm, sugar: e.target.value})} className="p-2 rounded-xl bg-gray-50 border border-gray-200 outline-none text-xs text-center font-bold" />
+                    </div>
+                    <input type="text" placeholder="หมายเหตุเพิ่มเติม" value={hForm.note} onChange={e=>setHForm({...hForm, note: e.target.value})} className="w-full p-2 mb-3 rounded-xl bg-gray-50 border border-gray-200 outline-none text-xs font-bold" />
+                    <button onClick={handleAdminSaveHealth} className="w-full bg-emerald-500 text-white font-black py-2.5 rounded-xl shadow-md text-sm active:scale-95 transition">บันทึกประวัติสุขภาพ</button>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><HeartPulse size={16} className="text-emerald-500"/> ประวัติย้อนหลัง</h4>
+                    <div className="space-y-3">
+                      {healthLogs.length === 0 ? <p className="text-center text-xs font-bold text-gray-400 py-6 bg-white rounded-2xl border border-dashed">ผู้ใช้ยังไม่มีประวัติ</p> : 
+                        healthLogs.map(log => (
+                          <div key={log.id} className="bg-white p-4 rounded-[1.2rem] shadow-sm border border-gray-100 space-y-2 relative">
+                            <p className="text-xs font-black text-emerald-600 bg-emerald-50 inline-block px-2 py-1 rounded-md mb-1"><Calendar size={12} className="inline mr-1"/>{log.date}</p>
+                            <div className="flex justify-between items-center bg-gray-50 p-2 rounded-xl">
+                              <div className="text-center flex-1 border-r border-gray-200 last:border-0"><p className="text-[9px] text-gray-400 font-bold">น้ำหนัก</p><p className="font-black text-gray-800">{log.weight||'-'}</p></div>
+                              <div className="text-center flex-1 border-r border-gray-200 last:border-0"><p className="text-[9px] text-gray-400 font-bold">ความดัน</p><p className="font-black text-gray-800">{log.bp||'-'}</p></div>
+                              <div className="text-center flex-1"><p className="text-[9px] text-gray-400 font-bold">น้ำตาล</p><p className="font-black text-gray-800">{log.sugar||'-'}</p></div>
+                            </div>
+                            {log.note && <p className="text-[10px] text-gray-600 bg-yellow-50 p-2 rounded-lg mt-1">📝 {log.note}</p>}
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'reminders' && (
+                <div className="animate-fade-in space-y-5">
+                  <div className="bg-white p-4 rounded-2xl shadow-sm border-2 border-rose-100">
+                    <h4 className="font-bold text-gray-800 mb-3 text-sm">เพิ่มรายการแจ้งเตือนให้ผู้ใช้</h4>
+                    <div className="space-y-3">
+                      <select value={reminderForm.type} onChange={e=>setReminderForm({...reminderForm, type: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm">
+                        <option value="medication">💊 ทานยา</option><option value="appointment">🏥 นัดหมอ/คลินิก</option>
+                      </select>
+                      <input type="text" placeholder="ชื่อยา หรือ ชื่อนัดหมาย" value={reminderForm.title} onChange={e=>setReminderForm({...reminderForm, title: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                      <div className="flex gap-2">
+                        <input type="date" value={reminderForm.date} onChange={e=>setReminderForm({...reminderForm, date: e.target.value})} className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                        <input type="time" value={reminderForm.time} onChange={e=>setReminderForm({...reminderForm, time: e.target.value})} className="w-1/3 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                      </div>
+                      <textarea placeholder="หมายเหตุ (เช่น ทานหลังอาหาร)" value={reminderForm.note} onChange={e=>setReminderForm({...reminderForm, note: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm resize-none"></textarea>
+                      <button onClick={handleAddReminder} className="w-full bg-rose-500 text-white font-black py-3 rounded-xl shadow-md active:scale-95 transition">บันทึกแจ้งเตือน</button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-gray-800 mb-2">รายการที่ตั้งไว้</h4>
+                    {reminders.length === 0 ? <p className="text-center text-xs font-bold text-gray-400">ยังไม่มีรายการ</p> : 
+                      reminders.map(rem => (
+                        <div key={rem.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex gap-3 relative">
+                           <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${rem.type === 'medication' ? 'bg-orange-100 text-orange-500' : 'bg-blue-100 text-blue-500'}`}>
+                             {rem.type === 'medication' ? <Pill size={20}/> : <Stethoscope size={20}/>}
+                           </div>
+                           <div className="flex-1 pr-6">
+                             <h5 className="font-extrabold text-sm text-gray-800">{rem.title}</h5>
+                             <p className="text-xs font-bold text-rose-500"><CalendarDays size={12} className="inline mr-1"/>{rem.date} {rem.time && `⏰ ${rem.time}`}</p>
+                             {rem.note && <p className="text-[10px] text-gray-500 mt-1 bg-gray-50 p-1.5 rounded-lg">📝 {rem.note}</p>}
+                           </div>
+                           <button onClick={()=>handleDeleteReminder(rem.id)} className="absolute top-3 right-3 text-gray-300 hover:text-red-500 transition"><Trash2 size={16}/></button>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminMissions({ missions, db, appId, setConfirmDialog, showToast }) {
+      const [isAdding, setIsAdding] = useState(false);
+      const [form, setForm] = useState({ title: '', subtitle: '', points: 10, maxPerDay: 1, expiresAt: '' });
+
+      const handleSave = async () => {
+        if (!form.title.trim()) return showToast('กรุณากรอกชื่อภารกิจ', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'missions'), { ...form, requiresPhoto: true });
+        setIsAdding(false); 
+        setForm({ title: '', subtitle: '', points: 10, maxPerDay: 1, expiresAt: '' });
+        showToast('เพิ่มภารกิจสำเร็จ');
+      };
+
+      const handleDelete = (id) => {
+        setConfirmDialog({ text: 'ลบภารกิจนี้ออกจากระบบใช่หรือไม่?', onConfirm: async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'missions', id));
+            showToast('ลบภารกิจแล้ว');
+        }});
+      };
+
+      return (
+        <div className="animate-fade-in space-y-6 pb-6">
+          <div className="flex justify-between items-center bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100">
+            <h2 className="text-xl font-black text-gray-800">จัดการภารกิจ</h2>
+            {!isAdding && <button onClick={() => setIsAdding(true)} className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl flex gap-2 font-black shadow-[0_5px_15px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition"><Plus size={18} /> สร้างใหม่</button>}
+          </div>
+
+          {isAdding && (
+            <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border-[4px] border-emerald-100 space-y-4 animate-slide-down">
+              <div className="flex justify-between items-center"><h3 className="font-black text-lg text-gray-800">ภารกิจใหม่</h3><button onClick={()=>setIsAdding(false)} className="bg-gray-100 p-2 rounded-full text-gray-500"><X size={16}/></button></div>
+              <input type="text" placeholder="ชื่อภารกิจหลัก" value={form.title} onChange={e=>setForm({...form, title: e.target.value})} className="w-full border-2 border-gray-100 focus:border-emerald-400 p-4 rounded-xl bg-gray-50 font-bold outline-none transition" />
+              <input type="text" placeholder="คำอธิบาย/เงื่อนไข" value={form.subtitle} onChange={e=>setForm({...form, subtitle: e.target.value})} className="w-full border-2 border-gray-100 focus:border-emerald-400 p-4 rounded-xl bg-gray-50 font-bold outline-none transition" />
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-gray-500 uppercase ml-2">แต้มที่จะได้</label>
+                  <input type="number" placeholder="แต้ม" value={form.points} onChange={e=>setForm({...form, points: Number(e.target.value)})} className="w-full border-2 border-gray-100 p-4 rounded-xl bg-gray-50 font-black text-emerald-600 text-center outline-none" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-black text-gray-500 uppercase ml-2">ทำได้กี่ครั้ง/วัน</label>
+                  <div className="relative">
+                    <Repeat className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input type="number" min="1" value={form.maxPerDay} onChange={e=>setForm({...form, maxPerDay: Number(e.target.value)})} className="w-full border-2 border-gray-100 p-4 pl-10 rounded-xl bg-gray-50 font-bold outline-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-gray-500 uppercase ml-2">หมดอายุ (ถ้ามี)</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input type="date" value={form.expiresAt} onChange={e=>setForm({...form, expiresAt: e.target.value})} className="w-full border-2 border-gray-100 p-4 pl-10 rounded-xl bg-gray-50 font-bold outline-none text-xs" />
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={handleSave} className="w-full bg-gray-900 text-white font-black py-4 rounded-xl flex justify-center items-center gap-2 hover:bg-gray-800 shadow-md mt-2">บันทึกขึ้นระบบ</button>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {missions.map(m => (
+              <div key={m.id} className="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex justify-between items-center group hover:border-emerald-200 transition-colors">
+                <div>
+                  <h4 className="font-extrabold text-gray-800 text-lg leading-tight">{m.title}</h4>
+                  <div className="flex items-center gap-3 mt-1">
+                    <p className="font-black text-teal-600 text-sm">🪙 {m.points} Pts</p>
+                    <p className="text-xs text-gray-400 font-bold flex items-center gap-1"><Repeat size={12}/> {m.maxPerDay || 1}/วัน</p>
+                    {m.expiresAt && <p className="text-[10px] text-red-400 font-bold bg-red-50 px-2 py-0.5 rounded-md flex items-center gap-1"><Calendar size={10}/> {m.expiresAt}</p>}
+                  </div>
+                </div>
+                <button onClick={() => handleDelete(m.id)} className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm"><Trash2 size={20}/></button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function AdminRewards({ rewards, db, appId, setConfirmDialog, showToast }) {
+      const [isAdding, setIsAdding] = useState(false);
+      const [form, setForm] = useState({ title: '', points: 500, image: '🎁' });
+
+      const handleSave = async () => {
+        if (!form.title.trim()) return showToast('กรุณากรอกชื่อรางวัล', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'rewards'), form);
+        setIsAdding(false); setForm({ title: '', points: 500, image: '🎁' });
+        showToast('เพิ่มของรางวัลสำเร็จ');
+      };
+
+      const handleDelete = (id) => {
+        setConfirmDialog({ text: 'ลบของรางวัลนี้ใช่หรือไม่?', onConfirm: async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'rewards', id));
+            showToast('ลบของรางวัลแล้ว');
+        }});
+      };
+
+      return (
+        <div className="animate-fade-in space-y-6 pb-6">
+          <div className="flex justify-between items-center bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100">
+            <h2 className="text-xl font-black text-gray-800">จัดการของรางวัล</h2>
+            {!isAdding && <button onClick={() => setIsAdding(true)} className="bg-teal-500 text-white px-5 py-2.5 rounded-xl flex gap-2 font-black shadow-[0_5px_15px_rgba(20,184,166,0.3)] hover:scale-105 active:scale-95 transition"><Plus size={18} /> เพิ่มใหม่</button>}
+          </div>
+
+          {isAdding && (
+            <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border-t-4 border-teal-500 space-y-4 animate-slide-down">
+              <div className="flex justify-between items-center"><h3 className="font-black text-lg text-gray-800">สร้างรางวัลใหม่</h3><button onClick={()=>setIsAdding(false)} className="bg-gray-100 p-2 rounded-full text-gray-500"><X size={16}/></button></div>
+              <input type="text" placeholder="ชื่อของรางวัล" value={form.title} onChange={e=>setForm({...form, title: e.target.value})} className="w-full border-2 border-gray-100 focus:border-teal-400 p-4 rounded-xl bg-gray-50 font-bold outline-none transition" />
+              <div className="flex gap-3">
+                <input type="number" placeholder="ใช้แต้มเท่าไหร่?" value={form.points} onChange={e=>setForm({...form, points: Number(e.target.value)})} className="flex-1 border-2 border-gray-100 focus:border-teal-400 p-4 rounded-xl bg-gray-50 font-black text-teal-600 outline-none" />
+                <input type="text" placeholder="Emoji" value={form.image} onChange={e=>setForm({...form, image: e.target.value})} className="w-24 border-2 border-gray-100 focus:border-teal-400 p-4 rounded-xl bg-gray-50 text-center text-2xl outline-none" />
+              </div>
+              <button onClick={handleSave} className="w-full bg-gray-900 text-white font-black py-4 rounded-xl flex justify-center items-center gap-2 hover:bg-gray-800 shadow-md">บันทึกขึ้นระบบ</button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            {rewards.map(r => (
+              <div key={r.id} className="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col items-center relative text-center hover:shadow-md transition">
+                <button onClick={() => handleDelete(r.id)} className="absolute top-3 right-3 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:bg-red-500 hover:text-white transition"><X size={14}/></button>
+                <div className="text-5xl mb-3 mt-2">{r.image}</div>
+                <h4 className="font-extrabold text-gray-800 text-sm leading-tight">{r.title}</h4>
+                <p className="font-black text-teal-500 text-xs mt-2 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-100">{r.points} Pts</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 3. USER APP
+    // ==========================================
+    function UserApp({ profile, missions, rewards, leaderboard, userProgress, onLogout, onUpdateProfile, db, appId, setConfirmDialog, showToast }) {
+      const [activeTab, setActiveTab] = useState('home'); // home, health, leaderboard, missions, log, profile
+      const [showRewardsModal, setShowRewardsModal] = useState(false);
+      const [successModal, setSuccessModal] = useState(null);
+
+      const completeMission = async (mission, base64Image) => {
+        const todayStr = getTodayStr();
+        const currentWeekStr = getWeekStr();
+        const completedToday = userProgress.filter(p => p.missionId === mission.id && p.date === todayStr).length;
+        const maxAllowed = mission.maxPerDay || 1;
+
+        if (completedToday >= maxAllowed) {
+          return showToast(`ภารกิจนี้ทำครบโควต้าของวันนี้แล้ว (${maxAllowed}/${maxAllowed} ครั้ง)`, 'error');
+        }
+        
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `progress_${profile.uid}`), {
+          missionId: mission.id, date: todayStr, timestamp: Date.now(), image: base64Image 
+        });
+
+        const userWeek = profile.currentWeek || '';
+        const baseWeekly = (userWeek === currentWeekStr) ? (profile.weeklyPoints || 0) : 0;
+        
+        const newWeeklyPoints = baseWeekly + mission.points;
+        const newTotalPoints = (profile.points || 0) + mission.points; 
+
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', profile.uid), { 
+          points: newTotalPoints,
+          weeklyPoints: newWeeklyPoints,
+          currentWeek: currentWeekStr
+        });
+        
+        showToast(`เยี่ยมมาก! ยืนยันภาพสำเร็จ ได้รับ ${mission.points} แต้ม 🎉`);
+      };
+
+      const redeemReward = (reward) => {
+        if ((profile.points || 0) < reward.points) return showToast('คะแนนไม่พอนะ ลุยทำภารกิจเพิ่มเลย! 🏃‍♂️', 'error');
+        setConfirmDialog({
+          text: `ยืนยันแลก "${reward.title}" ด้วย ${reward.points} แต้ม?`,
+          onConfirm: async () => {
+            const newPoints = profile.points - reward.points;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'profiles', profile.uid), { points: newPoints });
+            setSuccessModal(reward);
+            setShowRewardsModal(false);
+          }
+        });
+      };
+
+      return (
+        <div className="h-full flex flex-col bg-[#F4F7F6]">
+          <main className="flex-1 overflow-y-auto pb-24 hide-scrollbar">
+            {!showRewardsModal && activeTab === 'home' && <HomeTab profile={profile} db={db} appId={appId} onLogMeal={() => setActiveTab('log')} showToast={showToast} />}
+            {!showRewardsModal && activeTab === 'health' && <HealthTab profile={profile} db={db} appId={appId} showToast={showToast} />}
+            {!showRewardsModal && activeTab === 'leaderboard' && <UserLeaderboardTab leaderboard={leaderboard} currentUserId={profile.uid} />}
+            {!showRewardsModal && activeTab === 'missions' && <UserMissionsTab missions={missions} userProgress={userProgress} onComplete={completeMission} />}
+            {!showRewardsModal && activeTab === 'log' && <FoodLogTab profile={profile} db={db} appId={appId} showToast={showToast} />}
+            {!showRewardsModal && activeTab === 'profile' && <ProfileTab profile={profile} onLogout={onLogout} onOpenRewards={() => setShowRewardsModal(true)} onUpdateProfile={onUpdateProfile} showToast={showToast} leaderboard={leaderboard} db={db} appId={appId} />}
+            
+            {showRewardsModal && <RewardsModal onClose={() => setShowRewardsModal(false)} points={profile.points} rewards={rewards} onRedeem={redeemReward} />}
+          </main>
+
+          {successModal && (
+            <div className="absolute inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-sm animate-fade-in">
+              <div className="bg-white rounded-[3rem] p-8 text-center w-full border-[6px] border-white shadow-[0_0_50px_rgba(0,0,0,0.3)] relative overflow-hidden">
+                 <div className="absolute top-[-20%] left-[-20%] w-48 h-48 bg-teal-300 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+                 <div className="text-7xl mb-4 relative z-10 animate-bounce drop-shadow-md">🎉</div>
+                 <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500 mb-2 relative z-10 tracking-tight">ยินดีด้วย!</h2>
+                 <p className="text-gray-800 font-black text-lg mb-2 relative z-10">คุณได้ทำการแลกรางวัล:</p>
+                 <p className="text-2xl font-black text-gray-900 mb-6 bg-white/80 py-4 rounded-2xl border border-gray-100 relative z-10 shadow-sm">{successModal.image} {successModal.title}</p>
+                 
+                 <div className="bg-gradient-to-br from-teal-50 to-emerald-50 p-6 rounded-[2rem] border border-teal-200 mb-6 relative z-10 shadow-inner">
+                    <div className="flex justify-center mb-3"><Smartphone className="text-teal-500" size={40}/></div>
+                    <p className="text-teal-800 font-black text-lg leading-tight">📸 กรุณาแคปหน้าจอนี้</p>
+                    <div className="mt-4 bg-[#06C755] py-4 rounded-[1.2rem] shadow-[0_5px_15px_rgba(6,199,85,0.4)] flex justify-center items-center hover:scale-105 transition cursor-pointer">
+                       <span className="text-white font-black text-lg tracking-wide">ส่งหลักฐานให้แอดมิน</span>
+                    </div>
+                 </div>
+                 
+                 <button onClick={() => setSuccessModal(null)} className="w-full bg-gray-900 text-white font-black py-4 rounded-2xl hover:bg-gray-800 active:scale-95 transition relative z-10 shadow-md text-lg">
+                   รับทราบ ปิดหน้าต่าง
+                 </button>
+              </div>
+            </div>
+          )}
+
+          {!showRewardsModal && (
+            <nav className="absolute bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-gray-100 flex justify-between items-center py-2 px-3 z-20 pb-safe shadow-[0_-15px_40px_rgba(0,0,0,0.05)]">
+              <NavItem icon={<Home size={20} />} label="หน้าแรก" active={activeTab === 'home'} onClick={() => setActiveTab('home')} color="text-teal-500" />
+              <NavItem icon={<Activity size={20} />} label="สุขภาพ" active={activeTab === 'health'} onClick={() => setActiveTab('health')} color="text-rose-500" />
+              <NavItem icon={<Target size={20} />} label="ภารกิจ" active={activeTab === 'missions'} onClick={() => setActiveTab('missions')} color="text-indigo-500" />
+              <NavItem icon={<Trophy size={20} />} label="อันดับ" active={activeTab === 'leaderboard'} onClick={() => setActiveTab('leaderboard')} color="text-yellow-500" />
+              <NavItem icon={<Camera size={20} />} label="อาหาร" active={activeTab === 'log'} onClick={() => setActiveTab('log')} color="text-orange-500" />
+              <NavItem icon={<User size={20} />} label="โปรไฟล์" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} color="text-emerald-500" />
+            </nav>
+          )}
+        </div>
+      );
+    }
+
+    function NavItem({ icon, label, active, onClick, color }) {
+      return (
+        <button onClick={onClick} className={`flex flex-col items-center gap-1 p-2 transition-all duration-300 ${active ? color : 'text-gray-400 hover:text-gray-600'}`}>
+          <div className={`transition-transform duration-300 ${active ? 'scale-110 drop-shadow-md' : 'scale-100'}`}>{React.cloneElement(icon, { strokeWidth: active ? 3 : 2 })}</div>
+          <span className={`text-[9px] ${active ? 'font-black' : 'font-bold'}`}>{label}</span>
+        </button>
+      );
+    }
+
+    // --- Tab: Home (Added Reminders to Top) ---
+    function HomeTab({ profile, db, appId, onLogMeal, showToast }) {
+      const [stats, setStats] = useState({ water: 0, steps: 0 });
+      const [stepInput, setStepInput] = useState('');
+      const [reminders, setReminders] = useState([]);
+      const todayStr = getTodayStr();
+      const currentWeekStr = getWeekStr();
+
+      // โหลดสถิติรายวัน
+      useEffect(() => {
+        const statsRef = doc(db, 'artifacts', appId, 'public', 'data', `stats_${profile.uid}`, todayStr);
+        const unsub = onSnapshot(statsRef, (docSnap) => {
+          if (docSnap.exists()) setStats(docSnap.data());
+          else setDoc(statsRef, { water: 0, steps: 0 }); 
+        }, (error)=>{});
+        return () => unsub();
+      }, [profile.uid, db, appId, todayStr]);
+
+      // โหลดแจ้งเตือน (ย้ายมาจากหน้า HealthTab)
+      useEffect(() => {
+        const remRef = collection(db, 'artifacts', appId, 'public', 'data', `reminders_${profile.uid}`);
+        const unsubRem = onSnapshot(remRef, (snapshot) => {
+          setReminders(snapshot.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+        return () => unsubRem();
+      }, [profile.uid, db, appId]);
+
+      const updateWater = async () => {
+        if (stats.water >= 8) return showToast('ยอดเยี่ยม! ดื่มน้ำครบแล้ว 💧', 'success');
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', `stats_${profile.uid}`, todayStr), { water: stats.water + 1 });
+      };
+      const updateSteps = async () => {
+        const adding = parseInt(stepInput);
+        if (!adding || adding <= 0) return;
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', `stats_${profile.uid}`, todayStr), { steps: stats.steps + adding });
+        setStepInput('');
+      };
+
+      const weeklyScore = profile.currentWeek === currentWeekStr ? (profile.weeklyPoints || 0) : 0;
+
+      return (
+        <div className="p-6 pt-12 animate-fade-in space-y-6">
+          <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md p-4 rounded-[2rem] shadow-sm border border-white hover:shadow-md transition">
+            <div className="w-16 h-16 rounded-full border-[3px] border-white shadow-md overflow-hidden bg-gradient-to-tr from-gray-100 to-gray-50 flex items-center justify-center text-3xl flex-shrink-0">
+              {profile.avatar?.startsWith('http') || profile.avatar?.startsWith('data:') ? <img src={profile.avatar} className="w-full h-full object-cover" /> : profile.avatar}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-black text-gray-800 tracking-tight truncate">{profile.name}</h1>
+              <p className="text-sm font-bold text-teal-600">พร้อมลุยเป้าหมายวันนี้แล้วยัง? 🔥</p>
+            </div>
+          </div>
+
+          {/* แจ้งเตือนย้ายมาโชว์ที่นี่ */}
+          {reminders.length > 0 && (
+            <div className="bg-gradient-to-br from-rose-50 to-orange-50 p-5 rounded-[2rem] border border-rose-100 shadow-sm relative overflow-hidden animate-slide-down">
+              <h3 className="font-extrabold text-gray-800 mb-3 flex items-center gap-2"><Clock size={18} className="text-rose-500"/> แจ้งเตือนจากผู้ดูแล</h3>
+              <div className="space-y-3">
+                {reminders.map(rem => (
+                  <div key={rem.id} className="bg-white p-3 rounded-2xl shadow-sm flex gap-3 items-start border border-white">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${rem.type === 'medication' ? 'bg-orange-100 text-orange-500' : 'bg-blue-100 text-blue-500'}`}>
+                      {rem.type === 'medication' ? <Pill size={20}/> : <Stethoscope size={20}/>}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-extrabold text-sm text-gray-800">{rem.title}</h4>
+                      <p className="text-xs font-bold text-rose-500"><CalendarDays size={12} className="inline mr-1"/>{rem.date} {rem.time && `| ⏰ ${rem.time}`}</p>
+                      {rem.note && <p className="text-[10px] text-gray-600 mt-1 bg-gray-50 p-2 rounded-lg leading-relaxed border border-gray-100">💬 {rem.note}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="bg-gradient-to-br from-teal-400 to-emerald-500 rounded-[2rem] p-6 shadow-xl relative overflow-hidden text-white border border-white/20">
+            <div className="absolute top-0 right-0 p-4 opacity-20 text-7xl">⭐</div>
+            <div className="flex justify-between items-end mb-3 relative z-10">
+              <h2 className="text-lg font-black">ระดับ: {profile.level || 1} <span className="text-white/80 font-bold text-sm">(สุขภาพดี)</span></h2>
+            </div>
+            <div className="w-full bg-black/20 rounded-full h-4 mb-4 overflow-hidden shadow-inner border border-white/10 relative z-10">
+              <div className="bg-white h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ width: '40%' }}></div>
+            </div>
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl shadow-inner border border-white/30">🪙</div>
+              <div>
+                <p className="font-black text-4xl tracking-tight">{(profile.points || 0).toLocaleString()} <span className="text-base font-bold text-white/80">แต้มรวม</span></p>
+                <p className="text-sm font-bold text-emerald-100 mt-1">สัปดาห์นี้ทำได้: {weeklyScore.toLocaleString()} แต้ม</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white rounded-[2rem] p-5 shadow-sm flex flex-col items-center border border-gray-50 relative pb-8">
+              <h4 className="text-gray-800 font-extrabold mb-3 text-sm flex items-center gap-1"><Droplet size={16} className="text-[#34A0A4]"/> ดื่มน้ำ (แก้ว)</h4>
+              <div className="relative w-24 h-24 mb-2">
+                <svg className="w-full h-full transform -rotate-90 drop-shadow-sm">
+                  <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" className="stroke-cyan-50" />
+                  <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" strokeDasharray="251.2" strokeDashoffset={251.2 - (Math.min(100,(stats.water/8)*100)/100)*251.2} className="stroke-[#34A0A4] transition-all duration-1000 ease-out" strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center font-black text-3xl text-[#34A0A4]">{stats.water}<span className="text-sm text-gray-400">/8</span></div>
+              </div>
+              <button onClick={updateWater} className="w-14 h-14 bg-gradient-to-tr from-[#34A0A4] to-cyan-400 text-white rounded-full flex items-center justify-center shadow-[0_5px_15px_rgba(52,160,164,0.4)] hover:scale-105 active:scale-95 transition absolute -bottom-5 border-[4px] border-white"><Plus size={24} strokeWidth={3}/></button>
+            </div>
+
+            <div className="bg-white rounded-[2rem] p-5 shadow-sm flex flex-col items-center border border-gray-50 relative pb-8">
+              <h4 className="text-gray-800 font-extrabold mb-3 text-sm flex items-center gap-1"><Footprints size={16} className="text-rose-500"/> ก้าวเดิน</h4>
+              <div className="relative w-24 h-24 mb-2">
+                <svg className="w-full h-full transform -rotate-90 drop-shadow-sm">
+                  <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" className="stroke-rose-50" />
+                  <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" strokeDasharray="251.2" strokeDashoffset={251.2 - (Math.min(100,(stats.steps/10000)*100)/100)*251.2} className="stroke-rose-500 transition-all duration-1000 ease-out" strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center font-black text-lg text-rose-500 leading-tight mt-1">
+                  {stats.steps.toLocaleString()}<span className="text-[10px] text-gray-400">/10k</span>
+                </div>
+              </div>
+              <div className="absolute -bottom-5 w-[90%] flex bg-white rounded-full shadow-md border-2 border-white overflow-hidden p-1 bg-gray-50">
+                <input type="number" placeholder="+ก้าว" value={stepInput} onChange={e=>setStepInput(e.target.value)} className="w-full bg-transparent outline-none px-2 text-xs font-bold text-center text-gray-700" />
+                <button onClick={updateSteps} className="bg-gradient-to-r from-rose-400 to-rose-500 text-white rounded-full w-9 h-9 flex items-center justify-center active:scale-95 shadow-sm flex-shrink-0"><Plus size={16} strokeWidth={3}/></button>
+              </div>
+            </div>
+          </div>
+
+          <button onClick={onLogMeal} className="w-full bg-gradient-to-r from-[#A67B5B] to-[#8B5A2B] text-white rounded-[2rem] py-5 mt-6 text-xl font-black shadow-[0_10px_25px_rgba(166,123,91,0.3)] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all">
+            <span className="text-2xl drop-shadow-md">🥗</span> บันทึกมื้ออาหารด้วย AI
+          </button>
+        </div>
+      );
+    }
+
+    // --- Tab: Health Log ---
+    function HealthTab({ profile, db, appId, showToast }) {
+      const [healthLogs, setHealthLogs] = useState([]);
+      const [form, setForm] = useState({ weight: '', bp: '', sugar: '', note: '' });
+      const todayStr = getTodayStr();
+
+      useEffect(() => {
+        const hLogRef = collection(db, 'artifacts', appId, 'public', 'data', `health_${profile.uid}`);
+        const unsubHLog = onSnapshot(hLogRef, (snapshot) => {
+          setHealthLogs(snapshot.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+        return () => unsubHLog();
+      }, [profile.uid, db, appId]);
+
+      const handleSaveHealth = async () => {
+        if (!form.weight && !form.bp && !form.sugar) return showToast('กรุณากรอกข้อมูลอย่างน้อย 1 ช่อง', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `health_${profile.uid}`), {
+          ...form, date: todayStr, timestamp: Date.now()
+        });
+        setForm({ weight: '', bp: '', sugar: '', note: '' });
+        showToast('บันทึกข้อมูลสุขภาพสำเร็จ! ❤️');
+      };
+
+      return (
+        <div className="p-6 pt-12 animate-fade-in space-y-6">
+          <h1 className="text-3xl font-black text-gray-800 tracking-tight">บันทึกสุขภาพ 📋</h1>
+
+          {/* Health Form */}
+          <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
+            <h3 className="font-extrabold text-gray-800 flex items-center gap-2"><HeartPulse size={18} className="text-emerald-500"/> อัปเดตข้อมูลวันนี้</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">น้ำหนัก (กก.)</p>
+                <input type="number" step="0.1" value={form.weight} onChange={e=>setForm({...form, weight: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-transparent focus:border-emerald-400 outline-none font-bold text-center" placeholder="e.g. 65.5"/>
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">ระดับน้ำตาล (mg/dL)</p>
+                <input type="number" value={form.sugar} onChange={e=>setForm({...form, sugar: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-transparent focus:border-emerald-400 outline-none font-bold text-center" placeholder="e.g. 98"/>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">ความดันโลหิต (mmHg)</p>
+              <input type="text" value={form.bp} onChange={e=>setForm({...form, bp: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-transparent focus:border-emerald-400 outline-none font-bold text-center" placeholder="e.g. 120/80"/>
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1">หมายเหตุ อาการเบื้องต้น</p>
+              <textarea rows="2" value={form.note} onChange={e=>setForm({...form, note: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border-2 border-transparent focus:border-emerald-400 outline-none font-bold resize-none" placeholder="ปวดหัว, หน้ามืด ฯลฯ"></textarea>
+            </div>
+            <button onClick={handleSaveHealth} className="w-full bg-emerald-500 text-white font-black py-4 rounded-xl shadow-[0_5px_15px_rgba(16,185,129,0.3)] active:scale-95 transition">บันทึกข้อมูลสุขภาพ</button>
+          </div>
+
+          {/* History */}
+          <div className="space-y-3">
+            <h3 className="font-extrabold text-gray-800 flex items-center gap-2 mt-2"><FileText size={18} className="text-gray-500"/> ประวัติการบันทึกย้อนหลัง</h3>
+            {healthLogs.length === 0 ? <p className="text-center text-xs font-bold text-gray-400 bg-white py-6 rounded-2xl border border-dashed">ยังไม่มีประวัติ</p> : 
+              healthLogs.map(log => (
+                <div key={log.id} className="bg-white p-4 rounded-[1.5rem] shadow-sm border border-gray-100">
+                   <p className="text-[10px] font-black text-emerald-600 bg-emerald-50 inline-block px-3 py-1 rounded-full mb-3"><Calendar size={12} className="inline mr-1"/>{log.date}</p>
+                   <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                      <div className="text-center flex-1 border-r border-gray-200 last:border-0"><p className="text-[9px] text-gray-400 font-bold">น้ำหนัก</p><p className="font-black text-gray-800">{log.weight||'-'}</p></div>
+                      <div className="text-center flex-1 border-r border-gray-200 last:border-0"><p className="text-[9px] text-gray-400 font-bold">ความดัน</p><p className="font-black text-gray-800">{log.bp||'-'}</p></div>
+                      <div className="text-center flex-1"><p className="text-[9px] text-gray-400 font-bold">น้ำตาล</p><p className="font-black text-gray-800">{log.sugar||'-'}</p></div>
+                   </div>
+                   {log.note && <p className="text-xs text-gray-600 bg-yellow-50/50 p-2.5 rounded-xl border border-yellow-100 mt-2">📝 {log.note}</p>}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      );
+    }
+
+    // --- Tab: Missions ---
+    function UserMissionsTab({ missions, userProgress, onComplete }) {
+      const fileInputRef = useRef(null);
+      const [selectedMission, setSelectedMission] = useState(null);
+      const [verifying, setVerifying] = useState(false);
+      const todayStr = getTodayStr();
+
+      const validMissions = missions.filter(m => {
+        if (m.expiresAt && m.expiresAt < todayStr) return false;
+        return true;
+      });
+
+      const handleUploadClick = (mission) => {
+        setSelectedMission(mission);
+        fileInputRef.current.click();
+      };
+
+      const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !selectedMission) return;
+        setVerifying(true);
+        try {
+          const base64 = await resizeImage(file);
+          setTimeout(async () => {
+            await onComplete(selectedMission, base64);
+            setVerifying(false); setSelectedMission(null);
+          }, 2000); 
+        } catch(err) {
+          setVerifying(false);
+        }
+      };
+
+      return (
+        <div className="p-6 pt-12 animate-fade-in space-y-6">
+          <h1 className="text-3xl font-black text-gray-800 tracking-tight">ภารกิจสุขภาพ 🎯</h1>
+          <input type="file" accept="image/*" capture="environment" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+
+          {verifying && (
+            <div className="fixed inset-0 bg-white/95 z-50 flex flex-col items-center justify-center backdrop-blur-md">
+              <div className="w-28 h-28 bg-gradient-to-tr from-teal-400 to-emerald-400 rounded-[2.5rem] flex items-center justify-center animate-bounce mb-6 shadow-xl border-4 border-white"><Camera className="text-white" size={56}/></div>
+              <h2 className="text-3xl font-black text-gray-800 text-center tracking-tight">AI กำลังตรวจภาพ...</h2>
+              <p className="text-teal-600 font-bold mt-2 text-lg">โปรดรอสักครู่เพื่อให้คะแนนคุณ</p>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {validMissions.map(mission => {
+              const completedCount = userProgress.filter(p => p.missionId === mission.id && p.date === todayStr).length;
+              const maxAllowed = mission.maxPerDay || 1;
+              const isFullyCompleted = completedCount >= maxAllowed;
+
+              return (
+                <div key={mission.id} className={`bg-white rounded-[2rem] p-5 shadow-sm border-2 transition-all duration-500 ${isFullyCompleted ? 'border-teal-100 bg-teal-50/40' : 'border-transparent hover:shadow-md'}`}>
+                  <div className="flex gap-4">
+                    <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-3xl flex-shrink-0 shadow-inner border border-white bg-indigo-50 text-indigo-500">🎯</div>
+                    <div className="flex-1 pt-1 pr-2">
+                      <h3 className={`font-extrabold text-lg leading-tight ${isFullyCompleted ? 'text-gray-400 line-through' : 'text-gray-800'}`}>{mission.title}</h3>
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2 font-bold">{mission.subtitle}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex justify-between items-center border-t border-gray-50 pt-4">
+                    <div className="flex items-center gap-1 bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-600 px-3 py-1.5 rounded-xl font-black text-sm border border-teal-100 shadow-sm">
+                      🪙 +{mission.points} Pts <span className="text-[10px] text-gray-400 bg-white px-2 py-0.5 rounded-md ml-1 border">ทำแล้ว {completedCount}/{maxAllowed}</span>
+                    </div>
+                    
+                    {isFullyCompleted ? (
+                      <span className="font-extrabold text-emerald-500 flex items-center gap-1.5 bg-white px-4 py-2 rounded-xl text-sm shadow-sm border border-emerald-100">
+                        <CheckCircle size={16} strokeWidth={3} /> สำเร็จแล้ว
+                      </span>
+                    ) : (
+                      <button onClick={() => handleUploadClick(mission)} className="bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-5 py-2.5 rounded-xl font-black text-sm shadow-[0_5px_15px_rgba(20,184,166,0.3)] flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+                        <Camera size={18} /> ยืนยันภาพ
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {validMissions.length === 0 && <p className="text-center text-gray-400 font-bold p-10 bg-white rounded-3xl border border-dashed border-gray-200">ยังไม่มีภารกิจ</p>}
+          </div>
+        </div>
+      );
+    }
+
+    // --- Tab: Food Log (AI) ---
+    function FoodLogTab({ profile, db, appId, showToast }) {
+      const [activeMeal, setActiveMeal] = useState('lunch');
+      const [foodName, setFoodName] = useState('');
+      const [note, setNote] = useState('');
+      const [image, setImage] = useState(null);
+      const [logs, setLogs] = useState([]);
+      const [isAnalyzing, setIsAnalyzing] = useState(false);
+      const [aiAnalysis, setAiAnalysis] = useState(null);
+      
+      const fileRef = useRef(null);
+      const todayStr = getTodayStr();
+
+      useEffect(() => {
+        const logsRef = collection(db, 'artifacts', appId, 'public', 'data', `logs_${profile.uid}`);
+        const unsub = onSnapshot(logsRef, (snapshot) => {
+          const allLogs = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+          setLogs(allLogs.filter(l => l.date === todayStr).sort((a,b) => b.timestamp - a.timestamp));
+        }, (error)=>{});
+        return () => unsub();
+      }, [profile.uid, db, appId, todayStr]);
+
+      const handlePhoto = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setIsAnalyzing(true); setAiAnalysis(null); setFoodName('');
+        
+        try {
+          const base64 = await resizeImage(file);
+          setImage(base64);
+          const analysis = await analyzeFoodWithAI(base64);
+          setAiAnalysis(analysis);
+          setFoodName(analysis.name !== 'ไม่พบอาหาร' ? analysis.name : '');
+        } catch (err) {
+          setFoodName('');
+          showToast("ไม่สามารถใช้ AI วิเคราะห์ได้ (โปรดกรอกข้อมูลด้วยตนเอง)", "error");
+        } finally {
+          setIsAnalyzing(false);
+        }
+      };
+
+      const handleSaveMeal = async () => {
+        if (!foodName.trim() && !image) return showToast('กรุณาระบุชื่ออาหารหรือถ่ายรูป', 'error');
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `logs_${profile.uid}`), {
+          meal: activeMeal, name: foodName || 'เมนูระบุไม่ได้', note: note,
+          image: image, ai_data: aiAnalysis || null, date: todayStr, timestamp: Date.now()
+        });
+        setFoodName(''); setNote(''); setImage(null); setAiAnalysis(null);
+        showToast('บันทึกมื้ออาหารสำเร็จ! 🥗');
+      };
+
+      const tabs = [{ id: 'morning', label: 'เช้า', icon: '☀️', color:'text-yellow-500' }, { id: 'lunch', label: 'กลางวัน', icon: '🍴', color:'text-orange-500' }, { id: 'dinner', label: 'เย็น', icon: '🌙', color:'text-indigo-500' }, { id: 'snack', label: 'ว่าง', icon: '🍎', color:'text-red-500' }];
+
+      return (
+        <div className="space-y-6 pb-6">
+          <div className="pt-12 pb-4 px-6 border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-md z-10 flex items-center gap-3 shadow-sm">
+            <h1 className="text-xl font-black text-gray-800 leading-tight flex-1 text-center tracking-tight">บันทึกอาหาร</h1>
+          </div>
+
+          <div className="flex border-b border-gray-100 bg-white sticky top-[68px] z-10 shadow-sm px-2">
+            {tabs.map(tab => (
+              <button key={tab.id} onClick={() => setActiveMeal(tab.id)} className={`flex-1 py-4 flex flex-col items-center gap-2 relative ${activeMeal === tab.id ? tab.color : 'text-gray-400 hover:text-gray-600'}`}>
+                <span className={`text-2xl transition-transform ${activeMeal === tab.id ? 'scale-125 drop-shadow-sm' : 'scale-100'}`}>{tab.icon}</span>
+                <span className="text-xs font-black">{tab.label}</span>
+                {activeMeal === tab.id && <div className={`absolute bottom-0 w-1/2 h-1.5 rounded-t-full ${tab.color.replace('text-', 'bg-')}`}></div>}
+              </button>
+            ))}
+          </div>
+
+          <div className="px-6 space-y-6">
+            <div 
+              onClick={() => !isAnalyzing && fileRef.current.click()}
+              className={`w-full h-64 rounded-[2.5rem] border-2 flex flex-col items-center justify-center overflow-hidden relative transition-all cursor-pointer shadow-sm
+                ${image ? 'border-transparent shadow-lg' : 'border-dashed border-orange-400 bg-white'}
+                ${isAnalyzing ? 'opacity-90 pointer-events-none' : 'hover:scale-[1.02]'}`}
+            >
+              {isAnalyzing ? (
+                <div className="flex flex-col items-center z-10 bg-white/90 p-6 rounded-3xl backdrop-blur-md shadow-xl border border-orange-100 text-center">
+                  <Sparkles className="text-orange-500 animate-spin mb-3" size={48} />
+                  <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500 text-xl tracking-tight">AI กำลังวิเคราะห์...</span>
+                </div>
+              ) : image ? (
+                <>
+                  <img src={image} alt="Food" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                     <div className="bg-white/95 px-6 py-3 rounded-full font-black text-gray-800 flex items-center gap-2 shadow-lg"><ImageIcon size={20}/> แตะเพื่อเปลี่ยนรูป</div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-24 h-24 bg-gradient-to-tr from-orange-100 to-rose-50 rounded-[2rem] flex items-center justify-center mb-4 shadow-inner transform rotate-3 border border-white"><Camera className="text-orange-500" size={40}/></div>
+                  <span className="font-black text-orange-500 text-xl tracking-tight">ถ่ายรูปให้ AI ช่วยวิเคราะห์</span>
+                  <span className="text-xs text-gray-500 mt-2 font-bold bg-gray-50 px-3 py-1 rounded-full">(แคลอรี่ ความหวาน ความเค็ม)</span>
+                </>
+              )}
+              <input type="file" accept="image/*" className="hidden" ref={fileRef} onChange={handlePhoto} />
+            </div>
+
+            {aiAnalysis && (
+              <div className="bg-gradient-to-br from-white to-orange-50 p-6 rounded-[2.5rem] border border-orange-100 shadow-lg animate-slide-up relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 text-8xl">🤖</div>
+                <h3 className="font-black text-gray-800 flex items-center gap-2 mb-4 relative z-10"><Sparkles size={20} className="text-orange-500"/> ข้อมูลโภชนาการ (AI):</h3>
+                <div className="grid grid-cols-3 gap-3 mb-4 relative z-10">
+                  <div className="bg-white p-3 rounded-2xl text-center shadow-sm border border-orange-50">
+                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-1">แคลอรี่</p>
+                     <p className="font-black text-orange-500 text-2xl">{aiAnalysis.calories}</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-2xl text-center shadow-sm border border-orange-50">
+                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-1">ความหวาน</p>
+                     <p className={`font-black text-xl ${aiAnalysis.sugar === 'สูง' ? 'text-red-500' : 'text-emerald-500'}`}>{aiAnalysis.sugar}</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-2xl text-center shadow-sm border border-orange-50">
+                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-1">ความเค็ม</p>
+                     <p className={`font-black text-xl ${aiAnalysis.sodium === 'สูง' ? 'text-red-500' : 'text-emerald-500'}`}>{aiAnalysis.sodium}</p>
+                  </div>
+                </div>
+                <div className="bg-white/90 p-4 rounded-2xl shadow-inner border border-white relative z-10 text-center">
+                  <p className="text-sm font-bold text-gray-700 leading-relaxed">"{aiAnalysis.advice}"</p>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm space-y-4 border border-gray-50">
+              <input type="text" placeholder="ระบุชื่อเมนูอาหาร" value={foodName} onChange={e=>setFoodName(e.target.value)} className="w-full bg-gray-50 border-2 border-transparent focus:border-orange-400 rounded-2xl p-4 text-gray-800 font-black outline-none transition-colors text-lg" />
+              <div>
+                <h3 className="font-extrabold text-gray-800 mb-2 flex items-center gap-2">📝 พฤติกรรมการปรุง</h3>
+                <textarea rows="2" placeholder="เช่น เค็มจัด, ไม่ใส่น้ำตาล, หวานน้อย" value={note} onChange={e=>setNote(e.target.value)} className="w-full bg-gray-50 border-2 border-transparent focus:border-orange-400 rounded-2xl p-4 text-gray-800 font-bold outline-none resize-none transition-colors"></textarea>
+              </div>
+              <button onClick={handleSaveMeal} className="w-full bg-gradient-to-r from-orange-400 to-rose-500 text-white font-black py-5 rounded-2xl text-xl shadow-[0_10px_25px_rgba(249,115,22,0.3)] hover:scale-[1.02] active:scale-95 transition-all tracking-wide">บันทึกมื้อนี้เข้าสู่ระบบ</button>
+            </div>
+
+            {logs.length > 0 && (
+              <div className="pt-4">
+                <h3 className="font-black text-gray-800 text-xl mb-4 tracking-tight">ประวัติการกินวันนี้</h3>
+                <div className="space-y-4">
+                  {logs.map(log => (
+                    <div key={log.id} className="bg-white border border-gray-50 rounded-[2rem] p-4 flex gap-4 shadow-sm items-center hover:shadow-md transition">
+                      <div className="w-20 h-20 bg-gray-50 rounded-[1.5rem] overflow-hidden flex-shrink-0 border-2 border-white shadow-inner">
+                        {log.image ? <img src={log.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-3xl">🍽️</div>}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-[10px] font-black text-orange-500 bg-orange-50 px-3 py-1 rounded-full uppercase inline-block mb-1 border border-orange-100 shadow-sm">{tabs.find(t=>t.id === log.meal)?.label}</span>
+                        <h4 className="font-extrabold text-gray-800 text-lg leading-tight mt-1">{log.name}</h4>
+                        {log.ai_data && <p className="text-xs font-black text-rose-500 mt-1 bg-rose-50 inline-block px-2 py-0.5 rounded-md border border-rose-100">🔥 {log.ai_data.calories} kcal</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // --- Tab: Profile (Weekly Summary & Email Edit) ---
+    function ProfileTab({ profile, onLogout, onOpenRewards, onUpdateProfile, showToast, leaderboard, db, appId, onShowLeaderboard }) {
+      const [isEditing, setIsEditing] = useState(false);
+      const [editName, setEditName] = useState(profile.name);
+      const [editAvatar, setEditAvatar] = useState(profile.avatar);
+      
+      const [editEmail, setEditEmail] = useState('');
+      const [editPassword, setEditPassword] = useState('');
+      const [currentAuthId, setCurrentAuthId] = useState('');
+      const fileRef = useRef(null);
+
+      const [weeklyStats, setWeeklyStats] = useState({ steps: 0, water: 0, calories: 0, sugarAlerts: 0, sodiumAlerts: 0 });
+
+      const userRank = leaderboard?.find(u => u.uid === profile.uid)?.rank || '-';
+
+      useEffect(() => {
+        if (isEditing) {
+          const fetchAuthData = async () => {
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'auth'), where('uid', '==', profile.uid));
+            const snap = await getDocs(q);
+            if(!snap.empty) {
+               const authData = snap.docs[0].data();
+               setCurrentAuthId(snap.docs[0].id);
+               setEditEmail(authData.email);
+               setEditPassword(authData.password);
+            }
+          };
+          fetchAuthData();
+        }
+      }, [isEditing, db, appId, profile.uid]);
+
+      useEffect(() => {
+        const past7 = getPast7Days();
+        
+        const unsubStats = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', `stats_${profile.uid}`), snap => {
+           let steps = 0, water = 0;
+           snap.docs.forEach(d => {
+              if(past7.includes(d.id)) {
+                 steps += d.data().steps || 0;
+                 water += d.data().water || 0;
+              }
+           });
+           setWeeklyStats(prev => ({...prev, steps, water}));
+        });
+        
+        const unsubLogs = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', `logs_${profile.uid}`), snap => {
+           let cals = 0, sug = 0, sod = 0;
+           snap.docs.forEach(d => {
+              const data = d.data();
+              if(past7.includes(data.date)) {
+                 if(data.ai_data) {
+                    cals += data.ai_data.calories || 0;
+                    if(data.ai_data.sugar === 'สูง') sug++;
+                    if(data.ai_data.sodium === 'สูง') sod++;
+                 }
+              }
+           });
+           setWeeklyStats(prev => ({...prev, calories: cals, sugarAlerts: sug, sodiumAlerts: sod}));
+        });
+
+        return () => { unsubStats(); unsubLogs(); };
+      }, [db, appId, profile.uid]);
+
+      const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const base64 = await resizeImage(file, 200); 
+          setEditAvatar(base64);
+        }
+      };
+
+      const handleSaveProfile = () => {
+        if(!editName.trim()) return showToast("กรุณาใส่ชื่อ", 'error');
+        if(!editEmail.trim() || !editPassword.trim()) return showToast("กรุณาใส่อีเมลและรหัสผ่าน", 'error');
+        
+        onUpdateProfile(editName, editAvatar, editEmail, editPassword, currentAuthId);
+        setIsEditing(false);
+      };
+
+      return (
+        <div className="p-6 pt-12 animate-fade-in bg-[#F4F5F7] min-h-screen">
+          <div className="bg-white rounded-[2.5rem] p-8 shadow-sm mb-6 relative overflow-hidden border border-gray-50 flex flex-col items-center">
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-8xl">👑</div>
+            <div className="w-32 h-32 rounded-full border-[5px] border-white shadow-xl overflow-hidden bg-gray-100 flex items-center justify-center text-6xl mb-5 relative z-10">
+              {profile.avatar?.startsWith('http') || profile.avatar?.startsWith('data:') ? <img src={profile.avatar} className="w-full h-full object-cover" /> : profile.avatar}
+            </div>
+            <h2 className="text-3xl font-black text-gray-800 relative z-10 text-center tracking-tight">{profile.name}</h2>
+            
+            <div className="flex gap-2 mt-3 cursor-pointer hover:scale-105 transition" onClick={onShowLeaderboard}>
+              <p className="text-emerald-500 font-black bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-full text-sm shadow-sm flex items-center gap-1">
+                <Star size={16} className="fill-emerald-500"/> Lv. {profile.level || 1}
+              </p>
+              <p className="text-teal-600 font-black bg-teal-50 border border-teal-100 px-4 py-2 rounded-full text-sm shadow-sm flex items-center gap-1">
+                <Trophy size={16} className="text-teal-600"/> อันดับ {userRank}
+              </p>
+            </div>
+            
+            <button onClick={() => setIsEditing(true)} className="mt-6 bg-gray-900 text-white px-6 py-3.5 rounded-2xl font-black text-sm hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-md active:scale-95">
+              <Settings size={16}/> ตั้งค่าและแก้ไขโปรไฟล์
+            </button>
+          </div>
+
+          {/* สรุปผลรายสัปดาห์ */}
+          <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-50 relative overflow-hidden mb-6">
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-6xl">📊</div>
+            <h3 className="font-extrabold text-gray-800 text-lg mb-4 relative z-10 flex items-center gap-2"><TrendingUp size={20} className="text-teal-500"/> สรุปผลสุขภาพ 7 วันล่าสุด</h3>
+            
+            <div className="flex justify-around relative z-10 bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100 shadow-inner">
+               <div className="flex flex-col items-center">
+                  <span className="text-3xl mb-1 drop-shadow-sm">💧</span>
+                  <span className="font-black text-cyan-600 text-xl mb-1 leading-none">{weeklyStats.water}</span>
+                  <span className="text-[10px] text-gray-500 font-bold uppercase">ดื่มน้ำ (แก้ว)</span>
+               </div>
+               <div className="w-px bg-gray-200"></div>
+               <div className="flex flex-col items-center">
+                  <span className="text-3xl mb-1 drop-shadow-sm">👟</span>
+                  <span className="font-black text-rose-500 text-xl mb-1 leading-none">{weeklyStats.steps.toLocaleString()}</span>
+                  <span className="text-[10px] text-gray-500 font-bold uppercase">ก้าวเดิน (รวม)</span>
+               </div>
+               <div className="w-px bg-gray-200"></div>
+               <div className="flex flex-col items-center">
+                  <span className="text-3xl mb-1 drop-shadow-sm">🔥</span>
+                  <span className="font-black text-orange-500 text-xl mb-1 leading-none">{weeklyStats.calories.toLocaleString()}</span>
+                  <span className="text-[10px] text-gray-500 font-bold uppercase">แคลอรี่ที่กิน</span>
+               </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-rose-100 shadow-sm mt-4 flex justify-between text-xs relative z-10">
+               <span className="font-bold text-gray-700 flex items-center gap-1">⚠️ ทานหวานสูง: <span className={`font-black ${weeklyStats.sugarAlerts > 0 ? 'text-red-500' : 'text-emerald-500'}`}>{weeklyStats.sugarAlerts} มื้อ</span></span>
+               <span className="font-bold text-gray-700 flex items-center gap-1">⚠️ ทานเค็มสูง: <span className={`font-black ${weeklyStats.sodiumAlerts > 0 ? 'text-red-500' : 'text-emerald-500'}`}>{weeklyStats.sodiumAlerts} มื้อ</span></span>
+            </div>
+            {(weeklyStats.sugarAlerts > 2 || weeklyStats.sodiumAlerts > 2) && (
+              <p className="text-[10px] text-red-500 font-bold text-center mt-3 animate-pulse">สัปดาห์นี้ทานรสจัดบ่อยไปนิด ดื่มน้ำเยอะๆ นะครับ!</p>
+            )}
+          </div>
+
+          {isEditing && (
+            <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-6 backdrop-blur-sm animate-fade-in">
+              <div className="bg-white rounded-[3rem] p-8 w-full max-w-sm shadow-2xl relative border-[4px] border-white/20">
+                <button onClick={() => setIsEditing(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-800 bg-gray-100 p-2 rounded-full transition"><X size={20}/></button>
+                <h3 className="text-3xl font-black text-gray-800 mb-6 text-center tracking-tight">ตั้งค่าบัญชี</h3>
+                
+                <div className="flex flex-col items-center mb-6">
+                  <div className="w-24 h-24 rounded-full border-4 border-gray-100 overflow-hidden mb-2 relative group cursor-pointer shadow-inner bg-gray-50" onClick={() => fileRef.current.click()}>
+                     {editAvatar?.startsWith('http') || editAvatar?.startsWith('data:') ? <img src={editAvatar} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl">{editAvatar}</div>}
+                     <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition"><Camera className="text-white mb-1" size={24}/><span className="text-[10px] text-white font-bold">เปลี่ยนรูป</span></div>
+                  </div>
+                  <input type="file" accept="image/*" className="hidden" ref={fileRef} onChange={handleAvatarChange} />
+                </div>
+
+                <div className="space-y-3 overflow-y-auto max-h-[40vh] p-1 hide-scrollbar">
+                  <div className="bg-gray-50 p-2 rounded-2xl border-2 border-transparent focus-within:border-teal-400 transition-colors">
+                    <p className="text-[10px] font-black text-gray-400 uppercase px-3 pt-1">ชื่อแสดงผล</p>
+                    <input type="text" value={editName} onChange={e=>setEditName(e.target.value)} className="w-full bg-transparent px-3 py-1 text-gray-800 font-bold outline-none text-lg" />
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded-2xl border-2 border-transparent focus-within:border-teal-400 transition-colors">
+                    <p className="text-[10px] font-black text-gray-400 uppercase px-3 pt-1">อีเมล</p>
+                    <input type="email" value={editEmail} onChange={e=>setEditEmail(e.target.value)} className="w-full bg-transparent px-3 py-1 text-gray-800 font-bold outline-none text-lg" />
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded-2xl border-2 border-transparent focus-within:border-teal-400 transition-colors">
+                    <p className="text-[10px] font-black text-gray-400 uppercase px-3 pt-1">รหัสผ่าน</p>
+                    <input type="text" value={editPassword} onChange={e=>setEditPassword(e.target.value)} className="w-full bg-transparent px-3 py-1 text-gray-800 font-bold outline-none text-lg" />
+                  </div>
+                </div>
+                <button onClick={handleSaveProfile} className="w-full bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-black py-4 rounded-2xl shadow-[0_10px_20px_rgba(20,184,166,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-lg mt-6">บันทึกข้อมูล 💾</button>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <button onClick={onOpenRewards} className="w-full bg-gradient-to-r from-teal-400 to-emerald-500 text-white rounded-[2rem] py-5 text-xl font-black shadow-[0_10px_25px_rgba(20,184,166,0.3)] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all">
+              <span className="text-2xl drop-shadow-md">🎁</span> ร้านค้าแลกของรางวัล
+            </button>
+
+            <button onClick={onLogout} className="w-full bg-white text-red-500 font-black border-[3px] border-red-50 rounded-[2rem] hover:bg-red-50 transition-colors py-4 flex justify-center items-center gap-2 shadow-sm">
+               <LogOut size={20}/> ออกจากระบบ
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // --- Tab: Leaderboard (New Tab instead of Modal) ---
+    function UserLeaderboardTab({ leaderboard, currentUserId }) {
+      const top5 = leaderboard.slice(0, 5);
+      const userRank = leaderboard.find(u => u.uid === currentUserId)?.rank || '-';
+      const userPoints = leaderboard.find(u => u.uid === currentUserId)?.weeklyPoints || 0;
+
+      return (
+        <div className="flex flex-col animate-fade-in bg-gradient-to-b from-[#F4F5F7] to-[#E6F3EC] h-full relative overflow-hidden pb-20">
+          
+          <div className="pt-12 pb-4 px-6 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center justify-center shadow-sm flex-shrink-0 z-20">
+            <h1 className="text-xl font-black text-gray-800 text-center tracking-tight">การจัดอันดับประจำสัปดาห์</h1>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pb-32 pt-6 relative hide-scrollbar">
+            <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-teal-200 rounded-full blur-3xl opacity-40"></div>
+            <div className="absolute top-[20%] right-[-10%] w-64 h-64 bg-emerald-200 rounded-full blur-3xl opacity-40"></div>
+
+            <div className="text-center px-6 mb-8 relative z-10">
+              <h1 className="text-5xl font-black text-gray-900 tracking-tighter drop-shadow-sm mb-3">Leaderboard</h1>
+              <div className="bg-white inline-flex items-center gap-2 px-5 py-2 rounded-full shadow-sm border border-gray-100">
+                <span className="animate-pulse text-lg">⏱️</span>
+                <p className="text-gray-600 font-extrabold text-sm tracking-wide">คะแนนอัปเดตแบบ Real-time</p>
+              </div>
+            </div>
+
+            <div className="px-6 space-y-4 relative z-10">
+              {top5.map((user) => (
+                <div key={user.uid} className={`bg-white/95 backdrop-blur-sm p-4 rounded-[2rem] shadow-sm flex items-center relative overflow-hidden transition-all hover:scale-[1.02] border-4 ${user.uid === currentUserId ? 'border-teal-400 shadow-teal-100' : 'border-white'}`}>
+                  {user.rank === 1 && <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-yellow-300 to-yellow-500"></div>}
+                  {user.rank === 2 && <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-gray-300 to-gray-400"></div>}
+                  {user.rank === 3 && <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-orange-300 to-orange-500"></div>}
+                  
+                  <div className={`w-10 font-black text-3xl text-center mr-2 ${user.rank <= 3 ? 'text-gray-800' : 'text-gray-300'}`}>{user.rank}</div>
+                  <div className="w-16 h-16 bg-gradient-to-tr from-gray-100 to-white rounded-full flex items-center justify-center text-4xl mr-4 overflow-hidden border-[3px] border-white shadow-md flex-shrink-0">
+                    {user.avatar?.startsWith('http') || user.avatar?.startsWith('data:') ? <img src={user.avatar} className="w-full h-full object-cover"/> : user.avatar}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-extrabold text-gray-800 text-lg truncate flex items-center gap-2">
+                      {user.name} 
+                      {user.uid === currentUserId && <span className="text-[10px] text-white bg-teal-500 px-2 py-0.5 rounded-full shadow-sm flex-shrink-0">คุณ</span>}
+                    </h4>
+                    <p className="font-black text-gray-500 text-base mt-1">{(user.weeklyPoints||0).toLocaleString()} <span className="text-[10px] font-black uppercase text-gray-400">Pts/Week</span></p>
+                  </div>
+                  <div className="w-12 text-center drop-shadow-lg text-4xl">
+                    {user.rank === 1 && '🥇'} {user.rank === 2 && '🥈'} {user.rank === 3 && '🥉'}
+                  </div>
+                </div>
+              ))}
+              {top5.length === 0 && <p className="text-center text-gray-400 font-bold p-6">ยังไม่มีผู้ร่วมกิจกรรมในสัปดาห์นี้</p>}
+            </div>
+          </div>
+
+          <div className="fixed bottom-[5.5rem] left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-20 pointer-events-none pb-safe">
+            <div className="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-[2.5rem] p-5 flex items-center text-white shadow-[0_20px_40px_rgba(16,185,129,0.4)] pointer-events-auto border-[4px] border-white/20 backdrop-blur-md">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-4xl mr-4 overflow-hidden border-[3px] border-teal-200 shadow-inner flex-shrink-0">
+                 {leaderboard.find(u=>u.uid===currentUserId)?.avatar?.startsWith('http') || leaderboard.find(u=>u.uid===currentUserId)?.avatar?.startsWith('data:') ? <img src={leaderboard.find(u=>u.uid===currentUserId)?.avatar} className="w-full h-full object-cover"/> : leaderboard.find(u=>u.uid===currentUserId)?.avatar || '👦🏻'}
+              </div>
+              <div className="flex-1 flex justify-between items-center">
+                <div>
+                  <p className="text-[10px] text-teal-100 font-black uppercase tracking-widest mb-1">อันดับของคุณ</p>
+                  <h3 className="text-3xl font-black leading-none drop-shadow-sm text-white"># {userRank}</h3>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-teal-100 font-black uppercase tracking-widest mb-1">แต้มสัปดาห์นี้</p>
+                  <p className="font-black text-2xl text-yellow-300 drop-shadow-md">{(userPoints||0).toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- Rewards Modal ---
+    function RewardsModal({ onClose, points, rewards, onRedeem }) {
+      return (
+        <div className="absolute inset-0 bg-[#F4F5F7] z-50 flex flex-col animate-slide-up">
+          <div className="pt-12 pb-4 px-6 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center shadow-sm flex-shrink-0">
+            <button onClick={onClose} className="p-3 -ml-2 text-gray-800 bg-gray-100 rounded-full hover:bg-gray-200 transition"><ChevronLeft size={24} /></button>
+            <h1 className="text-xl font-black text-gray-800 flex-1 text-center pr-10">แลกของรางวัล</h1>
+          </div>
+
+          <div className="text-center py-8 bg-white border-b border-gray-100 mb-6 shadow-sm relative overflow-hidden flex-shrink-0">
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-8xl">🎁</div>
+            <p className="text-gray-500 font-black uppercase tracking-wider mb-2 relative z-10">คะแนนสะสม (Wallet) ของคุณ</p>
+            <div className="flex items-center justify-center gap-3 relative z-10">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-200 to-yellow-400 rounded-full flex items-center justify-center text-2xl shadow-md border-2 border-white">🪙</div>
+              <h2 className="text-6xl font-black text-gray-900 tracking-tight drop-shadow-sm">{(points||0).toLocaleString()}</h2>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-6 pb-10 grid grid-cols-2 gap-4 place-content-start hide-scrollbar">
+            {rewards.map(r => (
+               <div key={r.id} className="bg-white border border-gray-100 rounded-[2rem] p-4 shadow-sm flex flex-col items-center text-center hover:shadow-md transition">
+                 <div className={`w-full aspect-square bg-gradient-to-br from-teal-50 to-emerald-50 rounded-[1.5rem] flex items-center justify-center text-6xl mb-4 shadow-inner border border-white`}>{r.image}</div>
+                 <h4 className="font-extrabold text-gray-800 text-sm mb-auto leading-tight">{r.title}</h4>
+                 <button onClick={() => onRedeem(r)} className={`w-full mt-4 bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-black py-3 rounded-xl text-xs shadow-md hover:opacity-90 active:scale-95 transition`}>
+                   แลกเลย {r.points.toLocaleString()}
+                 </button>
+               </div>
+            ))}
+            {rewards.length === 0 && (
+              <div className="col-span-2 text-center text-gray-400 font-bold py-10 bg-white rounded-3xl border border-dashed border-gray-200">ยังไม่มีของรางวัลในระบบ</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function LoadingScreen() {
+      return <div className="flex h-full w-full items-center justify-center bg-gray-900"><Activity className="text-teal-500 animate-pulse drop-shadow-[0_0_15px_rgba(20,184,166,0.8)]" size={80} strokeWidth={2} /></div>;
+    }
+
+    const root = createRoot(document.getElementById('root'));
+    root.render(<MainApp />);
+  </script>
 </body>
 </html>
