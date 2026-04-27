@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -35,7 +36,8 @@
       Edit, Trash2, LogOut, Activity, Save, X, Lock, 
       Gift, Star, Sparkles, Image as ImageIcon,
       Mail, Key, Smartphone, AlertCircle, Eye, Calendar, Repeat,
-      Pill, Stethoscope, HeartPulse, Clock, FileText, CalendarDays, Target, TrendingUp
+      Pill, Stethoscope, HeartPulse, Clock, FileText, CalendarDays, Target, TrendingUp,
+      Sun, SunMedium, Moon, MoonStar
     } from 'https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0';
 
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
@@ -66,7 +68,7 @@
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     };
 
-    // คำนวณสัปดาห์ปัจจุบัน (2024-W42)
+    // คำนวณสัปดาห์ปัจจุบัน (2024-W42) เพื่อใช้รีเซ็ตคะแนน
     const getWeekStr = () => {
       const d = new Date();
       d.setHours(0,0,0,0);
@@ -583,8 +585,17 @@
       const [activeTab, setActiveTab] = useState('health'); 
       const todayStr = getTodayStr();
 
-      // Form for New Reminder (กลับมาเป็นแบบเรียบง่าย)
-      const [reminderForm, setReminderForm] = useState({ type: 'medication', title: '', date: '', time: '', note: '' });
+      // Form for New Reminder (แบบละเอียด)
+      const [reminderForm, setReminderForm] = useState({ 
+        type: 'medication', 
+        title: '', 
+        frequency: 'daily', // 'daily', 'specific'
+        mealTiming: 'after', // 'before', 'after', 'none'
+        timePeriods: { morning: false, lunch: false, evening: false, bedtime: false },
+        date: '', 
+        time: '', 
+        note: '' 
+      });
       const [hForm, setHForm] = useState({ weight: '', bp: '', sugar: '', note: '' });
 
       useEffect(() => {
@@ -611,13 +622,20 @@
       }, [user.uid, db, appId, todayStr]);
 
       const handleAddReminder = async () => {
-        if (!reminderForm.title || !reminderForm.date) return showToast('กรุณากรอกชื่อและวันที่ให้ครบ', 'error');
+        if (!reminderForm.title) return showToast('กรุณากรอกชื่อการแจ้งเตือน', 'error');
+        if (reminderForm.type === 'appointment' && !reminderForm.date) return showToast('กรุณากรอกวันที่นัดหมาย', 'error');
+        if (reminderForm.type === 'medication' && reminderForm.frequency === 'specific' && !reminderForm.date) return showToast('กรุณาระบุวันที่ทานยา', 'error');
+        
         await addDoc(collection(db, 'artifacts', appId, 'public', 'data', `reminders_${user.uid}`), {
           ...reminderForm,
           timestamp: Date.now()
         });
         showToast('เพิ่มการแจ้งเตือนสำเร็จ');
-        setReminderForm({ type: 'medication', title: '', date: '', time: '', note: '' });
+        setReminderForm({ 
+          type: 'medication', title: '', frequency: 'daily', mealTiming: 'after', 
+          timePeriods: { morning: false, lunch: false, evening: false, bedtime: false }, 
+          date: '', time: '', note: '' 
+        });
       };
 
       const handleDeleteReminder = (id) => {
@@ -723,19 +741,55 @@
               )}
 
               {activeTab === 'reminders' && (
-                <div className="animate-fade-in space-y-5">
+                <div className="animate-fade-in space-y-5 pb-6">
                   <div className="bg-white p-4 rounded-2xl shadow-sm border-2 border-rose-100">
                     <h4 className="font-bold text-gray-800 mb-3 text-sm">เพิ่มรายการแจ้งเตือนให้ผู้ใช้</h4>
                     <div className="space-y-3">
-                      <select value={reminderForm.type} onChange={e=>setReminderForm({...reminderForm, type: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm">
-                        <option value="medication">💊 ทานยา</option><option value="appointment">🏥 นัดหมอ/คลินิก</option>
+                      <select value={reminderForm.type} onChange={e=>setReminderForm({...reminderForm, type: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm text-gray-700">
+                        <option value="medication">💊 เตือนทานยา</option>
+                        <option value="appointment">🏥 นัดหมอ/คลินิก</option>
                       </select>
-                      <input type="text" placeholder="ชื่อยา หรือ ชื่อนัดหมาย" value={reminderForm.title} onChange={e=>setReminderForm({...reminderForm, title: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
-                      <div className="flex gap-2">
-                        <input type="date" value={reminderForm.date} onChange={e=>setReminderForm({...reminderForm, date: e.target.value})} className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
-                        <input type="time" value={reminderForm.time} onChange={e=>setReminderForm({...reminderForm, time: e.target.value})} className="w-1/3 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
-                      </div>
-                      <textarea placeholder="หมายเหตุ (เช่น ทานหลังอาหาร)" value={reminderForm.note} onChange={e=>setReminderForm({...reminderForm, note: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm resize-none"></textarea>
+                      <input type="text" placeholder={reminderForm.type === 'medication' ? "ชื่อยา" : "ชื่อนัดหมาย"} value={reminderForm.title} onChange={e=>setReminderForm({...reminderForm, title: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                      
+                      {reminderForm.type === 'medication' ? (
+                         <div className="space-y-3 border border-orange-100 bg-orange-50/50 p-3 rounded-xl">
+                            <div className="flex gap-2">
+                               <select value={reminderForm.frequency} onChange={e=>setReminderForm({...reminderForm, frequency: e.target.value})} className="flex-1 p-2 rounded-lg bg-white border border-gray-200 font-bold outline-none text-xs text-gray-700">
+                                 <option value="daily">📅 ทานทุกวัน</option>
+                                 <option value="specific">🗓️ ระบุวันที่</option>
+                               </select>
+                               <select value={reminderForm.mealTiming} onChange={e=>setReminderForm({...reminderForm, mealTiming: e.target.value})} className="flex-1 p-2 rounded-lg bg-white border border-gray-200 font-bold outline-none text-xs text-gray-700">
+                                 <option value="before">🍽️ ก่อนอาหาร</option>
+                                 <option value="after">🍽️ หลังอาหาร</option>
+                                 <option value="none">➖ ไม่ระบุ</option>
+                               </select>
+                            </div>
+                            {reminderForm.frequency === 'specific' && (
+                               <input type="date" value={reminderForm.date} onChange={e=>setReminderForm({...reminderForm, date: e.target.value})} className="w-full p-2 rounded-lg bg-white border border-gray-200 font-bold outline-none text-xs" />
+                            )}
+                            <div className="pt-1">
+                               <p className="text-[10px] font-bold text-gray-500 mb-1">ช่วงเวลาที่ต้องทาน:</p>
+                               <div className="flex flex-wrap gap-2">
+                                  {['morning', 'lunch', 'evening', 'bedtime'].map(t => {
+                                     const labels = {morning:'เช้า', lunch:'กลางวัน', evening:'เย็น', bedtime:'ก่อนนอน'};
+                                     return (
+                                       <label key={t} className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-bold cursor-pointer transition-colors ${reminderForm.timePeriods[t] ? 'bg-orange-500 text-white border-orange-500 shadow-sm' : 'bg-white text-gray-500 border-gray-200'}`}>
+                                          <input type="checkbox" className="hidden" checked={reminderForm.timePeriods[t]} onChange={e => setReminderForm({...reminderForm, timePeriods: {...reminderForm.timePeriods, [t]: e.target.checked}})} />
+                                          {labels[t]}
+                                       </label>
+                                     )
+                                  })}
+                               </div>
+                            </div>
+                         </div>
+                      ) : (
+                         <div className="flex gap-2">
+                           <input type="date" value={reminderForm.date} onChange={e=>setReminderForm({...reminderForm, date: e.target.value})} className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                           <input type="time" value={reminderForm.time} onChange={e=>setReminderForm({...reminderForm, time: e.target.value})} className="w-1/3 p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm" />
+                         </div>
+                      )}
+
+                      <textarea placeholder="หมายเหตุเพิ่มเติม" value={reminderForm.note} onChange={e=>setReminderForm({...reminderForm, note: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-bold outline-none text-sm resize-none"></textarea>
                       <button onClick={handleAddReminder} className="w-full bg-rose-500 text-white font-black py-3 rounded-xl shadow-md active:scale-95 transition">บันทึกแจ้งเตือน</button>
                     </div>
                   </div>
@@ -745,13 +799,29 @@
                     {reminders.length === 0 ? <p className="text-center text-xs font-bold text-gray-400">ยังไม่มีรายการ</p> : 
                       reminders.map(rem => (
                         <div key={rem.id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex gap-3 relative">
-                           <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${rem.type === 'medication' ? 'bg-orange-100 text-orange-500' : 'bg-blue-100 text-blue-500'}`}>
+                           <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${rem.type === 'medication' ? 'bg-orange-100 text-orange-500' : 'bg-blue-100 text-blue-500'}`}>
                              {rem.type === 'medication' ? <Pill size={20}/> : <Stethoscope size={20}/>}
                            </div>
                            <div className="flex-1 pr-6">
                              <h5 className="font-extrabold text-sm text-gray-800">{rem.title}</h5>
-                             <p className="text-xs font-bold text-rose-500"><CalendarDays size={12} className="inline mr-1"/>{rem.date} {rem.time && `⏰ ${rem.time}`}</p>
-                             {rem.note && <p className="text-[10px] text-gray-500 mt-1 bg-gray-50 p-1.5 rounded-lg">📝 {rem.note}</p>}
+                             {rem.type === 'medication' ? (
+                                <div className="mt-1">
+                                   <p className="text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                                      <CalendarDays size={12}/> {rem.frequency === 'daily' ? 'ทานทุกวัน' : rem.date}
+                                   </p>
+                                   <div className="flex flex-wrap gap-1.5 mt-2">
+                                      {rem.mealTiming === 'before' && <span className="text-[9px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md font-bold">ก่อนอาหาร</span>}
+                                      {rem.mealTiming === 'after' && <span className="text-[9px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold">หลังอาหาร</span>}
+                                      {rem.timePeriods?.morning && <span className="text-[9px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><Sun size={10}/> เช้า</span>}
+                                      {rem.timePeriods?.lunch && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><SunMedium size={10}/> กลางวัน</span>}
+                                      {rem.timePeriods?.evening && <span className="text-[9px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><Moon size={10}/> เย็น</span>}
+                                      {rem.timePeriods?.bedtime && <span className="text-[9px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><MoonStar size={10}/> ก่อนนอน</span>}
+                                   </div>
+                                </div>
+                             ) : (
+                                <p className="text-xs font-bold text-blue-500 mt-0.5 flex items-center gap-1"><CalendarDays size={12}/>{rem.date} {rem.time && `| ⏰ ${rem.time}`}</p>
+                             )}
+                             {rem.note && <p className="text-[10px] text-gray-500 mt-2 bg-gray-50 p-1.5 rounded-lg">📝 {rem.note}</p>}
                            </div>
                            <button onClick={()=>handleDeleteReminder(rem.id)} className="absolute top-3 right-3 text-gray-300 hover:text-red-500 transition"><Trash2 size={16}/></button>
                         </div>
@@ -1014,7 +1084,6 @@
       const todayStr = getTodayStr();
       const currentWeekStr = getWeekStr();
 
-      // โหลดสถิติรายวัน
       useEffect(() => {
         const statsRef = doc(db, 'artifacts', appId, 'public', 'data', `stats_${profile.uid}`, todayStr);
         const unsub = onSnapshot(statsRef, (docSnap) => {
@@ -1024,7 +1093,6 @@
         return () => unsub();
       }, [profile.uid, db, appId, todayStr]);
 
-      // โหลดแจ้งเตือน (ย้ายมาจากหน้า HealthTab)
       useEffect(() => {
         const remRef = collection(db, 'artifacts', appId, 'public', 'data', `reminders_${profile.uid}`);
         const unsubRem = onSnapshot(remRef, (snapshot) => {
@@ -1058,7 +1126,6 @@
             </div>
           </div>
 
-          {/* แจ้งเตือนย้ายมาโชว์ที่นี่ */}
           {reminders.length > 0 && (
             <div className="bg-gradient-to-br from-rose-50 to-orange-50 p-5 rounded-[2rem] border border-rose-100 shadow-sm relative overflow-hidden animate-slide-down">
               <h3 className="font-extrabold text-gray-800 mb-3 flex items-center gap-2"><Clock size={18} className="text-rose-500"/> แจ้งเตือนจากผู้ดูแล</h3>
@@ -1068,10 +1135,26 @@
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${rem.type === 'medication' ? 'bg-orange-100 text-orange-500' : 'bg-blue-100 text-blue-500'}`}>
                       {rem.type === 'medication' ? <Pill size={20}/> : <Stethoscope size={20}/>}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 pr-1">
                       <h4 className="font-extrabold text-sm text-gray-800">{rem.title}</h4>
-                      <p className="text-xs font-bold text-rose-500"><CalendarDays size={12} className="inline mr-1"/>{rem.date} {rem.time && `| ⏰ ${rem.time}`}</p>
-                      {rem.note && <p className="text-[10px] text-gray-600 mt-1 bg-gray-50 p-2 rounded-lg leading-relaxed border border-gray-100">💬 {rem.note}</p>}
+                      {rem.type === 'medication' ? (
+                         <div className="mt-1">
+                            <p className="text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                               <CalendarDays size={12}/> {rem.frequency === 'daily' ? 'ทานทุกวัน' : rem.date}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                               {rem.mealTiming === 'before' && <span className="text-[9px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-md font-bold">ก่อนอาหาร</span>}
+                               {rem.mealTiming === 'after' && <span className="text-[9px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-bold">หลังอาหาร</span>}
+                               {rem.timePeriods?.morning && <span className="text-[9px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><Sun size={10}/> เช้า</span>}
+                               {rem.timePeriods?.lunch && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><SunMedium size={10}/> กลางวัน</span>}
+                               {rem.timePeriods?.evening && <span className="text-[9px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><Moon size={10}/> เย็น</span>}
+                               {rem.timePeriods?.bedtime && <span className="text-[9px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-bold flex items-center gap-0.5"><MoonStar size={10}/> ก่อนนอน</span>}
+                            </div>
+                         </div>
+                      ) : (
+                         <p className="text-xs font-bold text-blue-500 mt-1 flex items-center gap-1"><CalendarDays size={12}/>{rem.date} {rem.time && `| ⏰ ${rem.time}`}</p>
+                      )}
+                      {rem.note && <p className="text-[10px] text-gray-600 mt-2 bg-gray-50 p-1.5 rounded-lg leading-relaxed border border-gray-100">💬 {rem.note}</p>}
                     </div>
                   </div>
                 ))}
